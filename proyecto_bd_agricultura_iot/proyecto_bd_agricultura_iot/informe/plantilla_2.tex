@@ -265,6 +265,7 @@ El script \tb{06\_pruebas.sql} ejercita cada procedimiento, función y trigger d
 %%CONSULTA:5%%
 
 \subsection{Metodología del experimento}
+\label{sec:metodologia}
 
 \textbf{Escenarios.} Cuatro bases independientes con 1\,000, 10\,000, 100\,000 y 1\,000\,000 de registros en total, generadas con la misma lógica y una semilla fija por escenario.
 
@@ -640,22 +641,22 @@ El modelo cliente-servidor dejaría de ser suficiente en otro escenario: una pla
 
 Video con la base de un millón de registros, ejecutando las consultas con y sin índices: \enlaceVideo
 
-Los comandos que se muestran en el video son los siguientes:
+En el video se sigue el mismo procedimiento de la Sección~\ref{sec:metodologia}, sobre la base de un millón de registros:
 
 \begin{lstlisting}
--- 1. Restaurar el respaldo (desde la terminal)
---    createdb agro1m
---    pg_restore -d agro1m agro_1M.dump
--- 2. Comprobar el volumen
-SELECT (SELECT count(*) FROM Lectura_Suelo) AS lecturas,
-       (SELECT count(*) FROM Evento_Riego)  AS riegos,
-       (SELECT count(*) FROM Alerta)        AS alertas;
--- 3. Consulta 5 sin indices
+-- 1. Comprobar el volumen: suma de filas de las 18 tablas (1 000 000)
+-- 2. Condicion sin indices
+DROP INDEX IF EXISTS idx_lectura_fecha;   -- y los otros ocho indices de 04_indices.sql
 SET enable_indexscan = OFF; SET enable_bitmapscan = OFF; SET enable_indexonlyscan = OFF;
-EXPLAIN ANALYZE <consulta 5>;
--- 4. Consulta 5 con indices
+VACUUM ANALYZE;
+-- 3. Las cinco consultas
+EXPLAIN (ANALYZE, BUFFERS) <consulta 1>;  -- y asi hasta la consulta 5
+-- 4. Condicion con indices
 SET enable_indexscan = ON; SET enable_bitmapscan = ON; SET enable_indexonlyscan = ON;
-EXPLAIN ANALYZE <consulta 5>;
+CREATE INDEX IF NOT EXISTS idx_lectura_fecha ...;  -- los nueve indices de 04_indices.sql
+VACUUM ANALYZE;
+-- 5. Las mismas cinco consultas
+EXPLAIN (ANALYZE, BUFFERS) <consulta 1>;  -- y asi hasta la consulta 5
 \end{lstlisting}
 
 \subsection{Respaldos de la base de datos}
@@ -694,6 +695,36 @@ Carpeta con todos los scripts: \enlaceRepositorio
 \end{tabularx}
 \caption{Archivos entregados.}
 \end{table}
+
+\subsection{Aplicación web (MVP)}
+\label{sec:web}
+
+Como complemento desarrollamos una aplicación web mínima en Python con Flask, conectada a la base de PostgreSQL mediante \tb{psycopg2}. El código está en la carpeta \tb{web} del proyecto y su archivo \tb{README.md} explica cómo ejecutarla. Ofrece cuatro funciones:
+
+\begin{itemize}[leftmargin=1.6em,itemsep=0.15em]
+\item \textbf{Consultas del experimento.} Ejecuta las cinco consultas de la Sección~\ref{sec:consultas}. Las lee directamente de \tb{03\_consultas.sql}, así que la aplicación y el informe usan exactamente el mismo SQL. Muestra el resultado, el tiempo medido desde la aplicación y, a pedido, el plan de ejecución con \tb{EXPLAIN (ANALYZE, BUFFERS)}.
+\item \textbf{Estado hídrico.} Consulta la vista \tb{vw\_estado\_hidrico\_zona} con filtros por fundo y por diagnóstico.
+\item \textbf{Alertas pendientes.} Muestra la vista \tb{vw\_alertas\_pendientes} y permite marcar una alerta como atendida, con la fecha de atención y el operario responsable.
+\item \textbf{Registro de lecturas.} Llama al procedimiento \tb{sp\_registrar\_lectura}. Si la humedad queda por debajo del mínimo del cultivo, el trigger \tb{trg\_alerta\_lectura} crea la alerta y la aplicación la muestra. Si el sensor no está activo o un valor viola una restricción \tb{CHECK}, se muestra el mensaje de PostgreSQL.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/web/inicio.png}
+\caption{Aplicación web: página de inicio con el resumen de la base de un millón de registros.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/web/consulta5.png}
+\caption{Aplicación web: consulta 5 con su tiempo de ejecución y su plan.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/web/lectura.png}
+\caption{Aplicación web: registro de una lectura con humedad baja; el trigger genera la alerta.}
+\end{figure}
 
 \subsection{Generador de datos}
 \label{sec:generador}
