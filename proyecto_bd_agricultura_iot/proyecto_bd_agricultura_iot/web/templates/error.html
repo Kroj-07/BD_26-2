@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo %}Sin conexión{% endblock %}
+{% block contenido %}
+<header class="cabecera">
+  <h1>No se pudo conectar a PostgreSQL</h1>
+  <p>Revisa que el servidor esté encendido y que las variables <code>PGUSER</code> y <code>PGPASSWORD</code>
+    estén definidas en la terminal donde se ejecutó <code>python app.py</code>.</p>
+</header>
+<pre class="sql">{{ detalle }}</pre>
+{% endblock %}

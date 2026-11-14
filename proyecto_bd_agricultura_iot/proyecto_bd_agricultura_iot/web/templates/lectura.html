@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block titulo %}Registrar lectura{% endblock %}
+{% block contenido %}
+<header class="cabecera">
+  <p class="antetitulo">Procedimiento sp_registrar_lectura · trigger trg_alerta_lectura</p>
+  <h1>Registrar lectura de suelo</h1>
+  <p>La lectura se guarda con el procedimiento almacenado, que valida que el sensor exista y esté activo.
+    Si la humedad queda por debajo del mínimo del cultivo, o la batería por debajo de 15 %, el trigger
+    crea la alerta automáticamente.</p>
+</header>
+
+{% if resultado %}
+<section class="resultado">
+  {% if resultado.existia %}
+  <h2>Lectura no duplicada</h2>
+  <p>Ese sensor ya tenía una lectura en {{ resultado.fecha.strftime('%Y-%m-%d %H:%M') }}. El procedimiento
+    no la reemplaza (<code>ON CONFLICT DO NOTHING</code>).</p>
+  {% else %}
+  <h2>Lectura registrada</h2>
+  <p>Sensor {{ resultado.sensor }}, {{ resultado.fecha.strftime('%Y-%m-%d %H:%M') }}.</p>
+  {% endif %}
+  {% if resultado.alertas %}
+  <p><strong>Alertas asociadas a esta lectura:</strong></p>
+  <ul>
+    {% for id, tipo, sev, valor in resultado.alertas %}
+    <li>N.° {{ id }}: {{ tipo }} <span class="etiqueta {{ sev | lower }}">{{ sev }}</span> (valor {{ valor }})</li>
+    {% endfor %}
+  </ul>
+  <a class="boton" href="{{ url_for('alertas') }}">Ver alertas pendientes</a>
+  {% elif not resultado.existia %}
+  <p>Los valores están dentro del rango: el trigger no generó alertas.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<form class="formulario" method="post">
+  <label class="ancho">Sensor (solo sensores activos que miden humedad)
+    <select name="sensor" id="sensor" required onchange="mostrarRango()">
+      {% set ns = namespace(fundo=None) %}
+      {% for id, serie, tipo, fundo, parcela, zona, cultivo, hmin, hmax in sensores %}
+        {% if fundo != ns.fundo %}{% if ns.fundo %}</optgroup>{% endif %}<optgroup label="{{ fundo }}">{% set ns.fundo = fundo %}{% endif %}
+        <option value="{{ id }}" data-cultivo="{{ cultivo or '' }}" data-min="{{ hmin if hmin is not none else '' }}"
+                data-max="{{ hmax if hmax is not none else '' }}"
+                {{ 'selected' if form.get('sensor') == id | string }}>
+          {{ serie }} · {{ parcela }} zona {{ zona }} · {{ tipo }}</option>
+      {% endfor %}
+      {% if ns.fundo %}</optgroup>{% endif %}
+    </select>
+  </label>
+  <p class="ancho rango" id="rango"></p>
+
+  <label>Fecha y hora
+    <input type="datetime-local" name="fecha" value="{{ form.get('fecha', ahora) }}" required></label>
+  <label>Humedad (%)
+    <input name="humedad" inputmode="decimal" value="{{ form.get('humedad', '') }}" placeholder="0 a 100" required></label>
+  <label>Temperatura (°C)
+    <input name="temperatura" inputmode="decimal" value="{{ form.get('temperatura', '') }}" placeholder="-10 a 60"></label>
+  <label>pH
+    <input name="ph" inputmode="decimal" value="{{ form.get('ph', '') }}" placeholder="0 a 14"></label>
+  <label>Conductividad (dS/m)
+    <input name="ce" inputmode="decimal" value="{{ form.get('ce', '') }}" placeholder="opcional"></label>
+  <label>Batería (%)
+    <input name="bateria" inputmode="numeric" value="{{ form.get('bateria', '') }}" placeholder="0 a 100"></label>
+
+  <div class="ancho"><button class="boton">Registrar lectura</button></div>
+</form>
+
+<script>
+function mostrarRango() {
+  var op = document.getElementById('sensor').selectedOptions[0];
+  var p = document.getElementById('rango');
+  if (!op || !op.dataset.min) { p.textContent = 'La parcela no tiene campaña en curso: no se evalúa la humedad.'; return; }
+  p.textContent = 'Cultivo: ' + op.dataset.cultivo + '. Humedad óptima entre ' + op.dataset.min +
+    ' % y ' + op.dataset.max + ' %. Una humedad menor a ' + op.dataset.min + ' % genera alerta.';
+}
+mostrarRango();
+</script>
+{% endblock %}

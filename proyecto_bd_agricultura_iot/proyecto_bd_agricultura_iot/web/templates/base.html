@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Panel de campo{% endblock %} · Agroandina</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+<aside class="lateral">
+  <a class="marca" href="{{ url_for('inicio') }}">
+    <span class="marca-logo" aria-hidden="true"></span>
+    <span><strong>Agroandina</strong><small>Panel de campo</small></span>
+  </a>
+  <nav>
+    {% set ruta = request.endpoint %}
+    <a href="{{ url_for('inicio') }}" class="{{ 'activo' if ruta == 'inicio' }}">Inicio</a>
+    <p class="grupo">Consultas</p>
+    {% for n, (titulo, _, _) in info.items() %}
+    <a href="{{ url_for('consulta', n=n) }}"
+       class="{{ 'activo' if ruta == 'consulta' and request.view_args.n == n }}">
+      <span class="num">{{ n }}</span>{{ titulo }}</a>
+    {% endfor %}
+    <p class="grupo">Operación</p>
+    <a href="{{ url_for('estado') }}" class="{{ 'activo' if ruta == 'estado' }}">Estado hídrico</a>
+    <a href="{{ url_for('alertas') }}" class="{{ 'activo' if ruta == 'alertas' }}">Alertas pendientes</a>
+    <a href="{{ url_for('nueva_lectura') }}" class="{{ 'activo' if ruta == 'nueva_lectura' }}">Registrar lectura</a>
+  </nav>
+  <p class="conexion">Base: <code>{{ base }}</code></p>
+</aside>
+<main>
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for tipo, texto in mensajes %}<div class="aviso {{ tipo }}">{{ texto }}</div>{% endfor %}
+  {% endwith %}
+  {% block contenido %}{% endblock %}
+</main>
+</body>
+</html>

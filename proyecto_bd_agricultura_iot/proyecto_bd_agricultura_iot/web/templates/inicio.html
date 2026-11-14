@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<header class="cabecera">
+  <h1>Agricultura de precisión</h1>
+  <p>Monitoreo de sensores de suelo, riego y cosechas de los fundos de la empresa.</p>
+</header>
+
+<section class="cifras">
+  <div><span>{{ '{:,}'.format(t.fundos).replace(',', ' ') }}</span>fundos</div>
+  <div><span>{{ '{:,}'.format(t.parcelas).replace(',', ' ') }}</span>parcelas</div>
+  <div><span>{{ '{:,}'.format(t.sensores).replace(',', ' ') }}</span>sensores</div>
+  <div><span>{{ '{:,}'.format(t.lecturas).replace(',', ' ') }}</span>lecturas de suelo</div>
+  <div><span>{{ '{:,}'.format(t.riegos).replace(',', ' ') }}</span>eventos de riego</div>
+  <div class="alerta-cifra"><span>{{ '{:,}'.format(t.pendientes).replace(',', ' ') }}</span>alertas pendientes</div>
+</section>
+
+<section class="bloque">
+  <h2>Estado hídrico de las zonas</h2>
+  <p class="nota">Última lectura de humedad de cada sensor comparada con el rango óptimo de su cultivo
+    (vista <code>vw_estado_hidrico_zona</code>).</p>
+  <div class="semaforo">
+    <a class="deficit" href="{{ url_for('estado', diagnostico='Deficit') }}"><span>{{ diagnostico.get('Deficit', 0) }}</span>en déficit</a>
+    <a class="optimo" href="{{ url_for('estado', diagnostico='Optimo') }}"><span>{{ diagnostico.get('Optimo', 0) }}</span>en rango óptimo</a>
+    <a class="exceso" href="{{ url_for('estado', diagnostico='Exceso') }}"><span>{{ diagnostico.get('Exceso', 0) }}</span>con exceso</a>
+  </div>
+</section>
+
+<section class="bloque">
+  <h2>Consultas del experimento</h2>
+  <div class="tarjetas">
+    {% for n, (titulo, usuario, desc) in info.items() %}
+    <a class="tarjeta" href="{{ url_for('consulta', n=n) }}">
+      <span class="num">{{ n }}</span>
+      <strong>{{ titulo }}</strong>
+      <small>{{ usuario }}</small>
+      <p>{{ desc }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

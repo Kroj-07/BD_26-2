@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_tabla.html" import tabla %}
+{% block titulo %}Estado hídrico{% endblock %}
+{% block contenido %}
+<header class="cabecera">
+  <p class="antetitulo">Vista vw_estado_hidrico_zona</p>
+  <h1>Estado hídrico por zona</h1>
+  <p>Última medición de humedad de cada sensor con el rango óptimo del cultivo que tiene sembrado.</p>
+</header>
+
+<form class="filtros" method="get">
+  <label>Fundo
+    <select name="fundo" onchange="this.form.submit()">
+      <option value="">Todos</option>
+      {% for f in fundos %}<option {{ 'selected' if f == fundo }}>{{ f }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Diagnóstico
+    <select name="diagnostico" onchange="this.form.submit()">
+      <option value="">Todos</option>
+      {% for d in ('Deficit', 'Optimo', 'Exceso') %}<option {{ 'selected' if d == diag }}>{{ d }}</option>{% endfor %}
+    </select>
+  </label>
+  <span class="dato"><strong>{{ filas | length }}</strong> sensores · {{ '%.1f' | format(ms) }} ms</span>
+</form>
+
+{{ tabla(columnas, filas) }}
+{% endblock %}

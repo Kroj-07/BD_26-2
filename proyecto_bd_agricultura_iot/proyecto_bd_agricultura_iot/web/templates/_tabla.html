@@ -1,0 +1,27 @@
+{% macro tabla(columnas, filas, accion=None) %}
+<div class="tabla-marco">
+<table>
+  <thead><tr>
+    {% for c in columnas %}<th>{{ c | replace('_', ' ') }}</th>{% endfor %}
+    {% if accion %}<th></th>{% endif %}
+  </tr></thead>
+  <tbody>
+  {% for fila in filas %}
+    <tr>
+    {% for v in fila %}
+      {% if v is none %}<td class="nulo">—</td>
+      {% elif v is number %}<td class="n">{{ '{:,}'.format(v).replace(',', ' ') if v is integer else '{:,.2f}'.format(v).replace(',', ' ') }}</td>
+      {% elif v.strftime is defined %}<td class="fecha">{{ v.strftime('%Y-%m-%d %H:%M') }}</td>
+      {% elif v in ('Critica', 'Alta', 'Media', 'Baja', 'Deficit', 'Optimo', 'Exceso') %}<td><span class="etiqueta {{ v | lower }}">{{ v }}</span></td>
+      {% else %}<td>{{ v }}</td>
+      {% endif %}
+    {% endfor %}
+    {% if accion %}<td>{{ accion(fila) }}</td>{% endif %}
+    </tr>
+  {% else %}
+    <tr><td colspan="{{ columnas | length + (1 if accion else 0) }}" class="vacio">Sin filas.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endmacro %}

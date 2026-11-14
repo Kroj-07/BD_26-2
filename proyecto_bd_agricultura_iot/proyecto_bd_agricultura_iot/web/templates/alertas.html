@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "_tabla.html" import tabla %}
+{% block titulo %}Alertas pendientes{% endblock %}
+{% macro atender(fila) %}
+<form method="post" action="{{ url_for('atender', id_alerta=fila[0]) }}" class="en-linea">
+  <input type="hidden" name="fundo" value="{{ fundo }}">
+  <input type="hidden" name="severidad" value="{{ sev }}">
+  <select name="operario" aria-label="Operario que atiende">
+    <option value="">Sin operario</option>
+    {% for id, nombre in operarios %}<option value="{{ id }}">{{ nombre }}</option>{% endfor %}
+  </select>
+  <button class="boton pequeno">Atender</button>
+</form>
+{% endmacro %}
+{% block contenido %}
+<header class="cabecera">
+  <p class="antetitulo">Vista vw_alertas_pendientes</p>
+  <h1>Alertas pendientes</h1>
+  <p>Bandeja del operador de riego, ordenada por severidad y antigüedad. Al atender una alerta se
+    registra la fecha de atención y el operario.</p>
+</header>
+
+<form class="filtros" method="get">
+  <label>Fundo
+    <select name="fundo" onchange="this.form.submit()">
+      <option value="">Todos</option>
+      {% for f in fundos %}<option {{ 'selected' if f == fundo }}>{{ f }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Severidad
+    <select name="severidad" onchange="this.form.submit()">
+      <option value="">Todas</option>
+      {% for s in ('Critica', 'Alta', 'Media', 'Baja') %}<option {{ 'selected' if s == sev }}>{{ s }}</option>{% endfor %}
+    </select>
+  </label>
+  <span class="dato"><strong>{{ '{:,}'.format(total).replace(',', ' ') }}</strong> pendientes
+    {% if total > filas | length %}(se muestran las {{ filas | length }} primeras){% endif %}</span>
+</form>
+
+{{ tabla(columnas, filas, accion=atender) }}
+{% endblock %}
