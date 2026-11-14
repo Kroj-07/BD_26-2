@@ -3,9 +3,10 @@
 """
 Arma informe/informe.tex a partir de las plantillas, los scripts SQL, los
 resultados del experimento y el catalogo de PostgreSQL (bases agro1k..agro1m).
-Uso: python construir_informe.py
+Uso: python construir_informe.py [--salida RUTA]
+     (sin --salida escribe informe/informe.tex)
 """
-import json, math, os, platform, re
+import argparse, json, math, os, platform, re
 import psycopg2
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
@@ -220,6 +221,10 @@ def acceso(plan, q):
 
 
 def main():
+    ap = argparse.ArgumentParser(description="Arma informe.tex desde las plantillas.")
+    ap.add_argument("--salida", default=os.path.join(INF, "informe.tex"),
+                    help="archivo de salida (por defecto informe/informe.tex)")
+    salida = ap.parse_args().salida
     d = json.load(open(os.path.join(RES, "resultados.json"), encoding="utf-8"))
     carga = json.load(open(os.path.join(RES, "carga.json"), encoding="utf-8"))
     tab = {(r["consulta"], r["escenario"], r["condicion"]): r for r in d["consultas"]}
@@ -535,9 +540,9 @@ def main():
     for k, v in rep.items():
         texto = texto.replace(k, v)
     faltan = sorted(set(re.findall(r"%%[A-Z_]+[^%\n]*%%|@@[A-Z0-9]+@@", texto)))
-    with open(os.path.join(INF, "informe.tex"), "w", encoding="utf-8") as fh:
+    with open(salida, "w", encoding="utf-8") as fh:
         fh.write(texto)
-    print("informe.tex generado; marcadores sin reemplazar:", faltan or "ninguno")
+    print("%s generado; marcadores sin reemplazar:" % salida, faltan or "ninguno")
 
 
 if __name__ == "__main__":
