@@ -220,6 +220,48 @@ def acceso(plan, q):
     return "--"
 
 
+def tabla_escritura_indices():
+    """Tabla de escritura_indices.py: cada indice frente a la misma tabla sin indices."""
+    ruta = os.path.join(RES, "escritura_indices.json")
+    if not os.path.exists(ruta):
+        return ""
+    d = json.load(open(ruta, encoding="utf-8"))
+    r = {(x["configuracion"], x["operacion"]): x for x in d["resultados"]}
+    tablas, ops = [], {}
+    for x in d["resultados"]:
+        if x["configuracion"] == "sin":
+            if x["tabla"] not in tablas:
+                tablas.append(x["tabla"])
+            ops.setdefault(x["tabla"], []).append(x["operacion"])
+
+    def celda(conf, op, base):
+        x = r[(conf, op)]
+        txt = "%s $\\pm$ %s" % (ms(x["promedio"]), ms(x["desviacion"]))
+        if base is None:
+            return [txt, "--"]
+        p = 100 * (x["promedio"] / base - 1)
+        return [txt, ("+" if p >= 0 else "$-$") + num(abs(p), 0) + "~\\%"]
+
+    filas = []
+    for t in tablas:
+        ins, act = ops[t]
+        base = {op: r[("sin", op)]["promedio"] for op in (ins, act)}
+        confs = [("sin", "Sin índices")]
+        confs += [(n, "\\texttt{%s}" % esc(n)) for n, tt in d["indices"].items() if tt == t]
+        confs.append(("todos", "Los nueve índices"))
+        for i, (conf, nombre) in enumerate(confs):
+            primera = "" if i else (("\\midrule " if filas else "") + esc(t))
+            filas.append([primera, nombre] +
+                         celda(conf, ins, None if conf == "sin" else base[ins]) +
+                         celda(conf, act, None if conf == "sin" else base[act]))
+    return tabla(["Tabla", "Configuración", "Inserción (ms)", "Sobrecosto", "Actualización (ms)",
+                  "Sobrecosto"], filas,
+                 "Costo de escritura índice por índice (1M, 5 iteraciones, contenedor con "
+                 "PostgreSQL 16 y un núcleo): promedio $\\pm$ desviación y sobrecosto respecto "
+                 "de la misma tabla sin índices.", "tab:escritura_indices",
+                 ancho="llrrrr", resize=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description="Arma informe.tex desde las plantillas.")
     ap.add_argument("--salida", default=os.path.join(INF, "informe.tex"),
@@ -463,6 +505,7 @@ def main():
                                        "Costo de escritura con y sin los índices de optimización "
                                        "(1M, 5 iteraciones).", "tab:escritura",
                                        ancho="lrrrrrr", resize=True)
+    rep["%%TABLA_ESCRITURA_INDICES%%"] = tabla_escritura_indices()
     cur.execute("""SELECT t.relname, i.relname, am.amname, pg_relation_size(i.oid),
                           x.indisprimary, x.indisunique
                    FROM pg_index x JOIN pg_class i ON i.oid = x.indexrelid

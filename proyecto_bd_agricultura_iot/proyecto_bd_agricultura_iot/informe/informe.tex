@@ -2499,6 +2499,43 @@ Lectura\_Suelo & \texttt{pk\_lectura} & B+ tree & 23\,608 & Clave primaria \\
 \end{table}
 
 
+\textbf{Costo de cada índice por separado.} Para saber qué cuesta usar un índice u otro, repetimos la medición con cada uno de los nueve índices por separado, además de sin ninguno y con los nueve juntos, sobre una inserción y una actualización de cada tabla indexada (Tabla~\ref{tab:escritura_indices}). La metodología es la misma: cinco iteraciones dentro de transacciones revertidas, con los triggers de usuario desactivados (así que \tb{trg\_alerta\_lectura} no interviene) y \tb{VACUUM (FULL, ANALYZE)} al cambiar de configuración. Esta prueba se ejecutó después, con \tb{escritura\_indices.py}, en un contenedor Docker con PostgreSQL 16.15 limitado a un núcleo y 4~GB de RAM sobre otro equipo, por lo que sus milisegundos no se comparan con los de la Tabla~\ref{tab:escritura}; sí se comparan entre sí, porque las filas sin índices y con los nueve se midieron en la misma corrida.
+
+\begin{table}[H]
+\centering\small
+\resizebox{\textwidth}{!}{\begin{tabular}{llrrrr}
+\toprule
+Tabla & Configuración & Inserción (ms) & Sobrecosto & Actualización (ms) & Sobrecosto \\
+\midrule
+Lectura\_Suelo & Sin índices & 320.85 $\pm$ 17.29 & -- & 69.57 $\pm$ 49.14 & -- \\
+ & \texttt{idx\_lectura\_fecha} & 329.27 $\pm$ 17.65 & +3~\% & 82.31 $\pm$ 17.08 & +18~\% \\
+ & \texttt{idx\_lectura\_disp\_humedad} & 350.75 $\pm$ 17.45 & +9~\% & 87.28 $\pm$ 41.03 & +25~\% \\
+ & Los nueve índices & 422.72 $\pm$ 28.53 & +32~\% & 102.86 $\pm$ 22.46 & +48~\% \\
+\midrule Evento\_Riego & Sin índices & 144.85 $\pm$ 1.578 & -- & 18.80 $\pm$ 2.308 & -- \\
+ & \texttt{idx\_evento\_parcela\_fecha} & 159.79 $\pm$ 4.399 & +10~\% & 28.21 $\pm$ 4.267 & +50~\% \\
+ & Los nueve índices & 177.17 $\pm$ 6.972 & +22~\% & 28.30 $\pm$ 4.357 & +51~\% \\
+\midrule Cosecha & Sin índices & 77.02 $\pm$ 1.818 & -- & 10.88 $\pm$ 1.805 & -- \\
+ & \texttt{idx\_cosecha\_campania} & 81.80 $\pm$ 2.891 & +6~\% & 15.86 $\pm$ 4.993 & +46~\% \\
+ & \texttt{idx\_cosecha\_categoria} & 94.96 $\pm$ 8.431 & +23~\% & 17.37 $\pm$ 1.734 & +60~\% \\
+ & Los nueve índices & 90.58 $\pm$ 2.759 & +18~\% & 18.63 $\pm$ 1.216 & +71~\% \\
+\midrule Campania & Sin índices & 87.98 $\pm$ 4.122 & -- & 4.403 $\pm$ 0.291 & -- \\
+ & \texttt{idx\_campania\_vigente} & 90.57 $\pm$ 6.650 & +3~\% & 4.871 $\pm$ 0.244 & +11~\% \\
+ & \texttt{idx\_campania\_cultivo} & 96.96 $\pm$ 5.545 & +10~\% & 5.788 $\pm$ 0.390 & +31~\% \\
+ & Los nueve índices & 96.07 $\pm$ 1.497 & +9~\% & 5.634 $\pm$ 0.342 & +28~\% \\
+\midrule Dispositivo & Sin índices & 79.13 $\pm$ 1.700 & -- & 8.578 $\pm$ 0.856 & -- \\
+ & \texttt{idx\_dispositivo\_zona} & 86.36 $\pm$ 1.953 & +9~\% & 12.62 $\pm$ 2.325 & +47~\% \\
+ & Los nueve índices & 97.52 $\pm$ 31.22 & +23~\% & 10.99 $\pm$ 0.995 & +28~\% \\
+\midrule Alerta & Sin índices & 84.59 $\pm$ 5.006 & -- & 23.54 $\pm$ 3.005 & -- \\
+ & \texttt{idx\_alerta\_humedad\_baja} & 101.59 $\pm$ 10.77 & +20~\% & 36.71 $\pm$ 1.887 & +56~\% \\
+ & Los nueve índices & 92.29 $\pm$ 4.386 & +9~\% & 39.52 $\pm$ 4.235 & +68~\% \\
+\bottomrule
+\end{tabular}}
+\caption{Costo de escritura índice por índice (1M, 5 iteraciones, contenedor con PostgreSQL 16 y un núcleo): promedio $\pm$ desviación y sobrecosto respecto de la misma tabla sin índices.}\label{tab:escritura_indices}
+\end{table}
+
+
+Cada índice añade entre 3 y 23~\% a la inserción y entre 11 y 60~\% a la actualización de su tabla. Las actualizaciones pagan más aunque la columna modificada no forme parte del índice, como la duración de los riegos o el estado de los dispositivos: tras el \tb{VACUUM FULL} las páginas quedan llenas, la nueva versión de la fila no cabe en la misma página y PostgreSQL no puede hacer una actualización HOT, así que agrega una entrada en cada índice de la tabla. Los índices más anchos cuestan más: \tb{idx\_cosecha\_categoria}, con dos columnas y una incluida, encarece la inserción de cosechas un 23~\%, frente al 6~\% del hash sobre \tb{id\_campania}. Un índice parcial no ahorra nada si las filas nuevas cumplen su condición: todas las alertas insertadas son de humedad baja e \tb{idx\_alerta\_humedad\_baja} las encarece un 20~\%. Las diferencias de unos 10 puntos están dentro de la variación entre corridas: en \tb{Alerta} y \tb{Dispositivo} la configuración con los nueve índices tiene sobre esa tabla el mismo índice que la individual y aun así da sobrecostos distintos. En cambio, en \tb{Lectura\_Suelo} los dos índices juntos agregan 32~\% a la inserción, bastante más que la suma de los dos por separado (3 y 9~\%).
+
 \subsection{Resultados}
 \label{sec:resultados}
 
@@ -3366,7 +3403,7 @@ ORDER BY pct_respuesta ASC;
 \end{lstlisting}
 
 
-\textbf{Resumen práctico.} Para esta base recomendamos conservar \tb{idx\_lectura\_fecha} (o su versión BRIN si el espacio importa) e \tb{idx\_alerta\_humedad\_baja}, y retirar los otros siete. En particular, \tb{idx\_lectura\_disp\_humedad} ocupa 24~MB, nunca se usa y encarece cada actualización de humedad.
+\textbf{Resumen práctico.} Para esta base recomendamos conservar \tb{idx\_lectura\_fecha} (o su versión BRIN si el espacio importa) e \tb{idx\_alerta\_humedad\_baja}, y retirar los otros siete. En particular, \tb{idx\_lectura\_disp\_humedad} ocupa 24~MB, nunca se usa y encarece cada actualización de humedad. La medición índice por índice (Tabla~\ref{tab:escritura_indices}) lo cuantifica: por sí solo agrega un 9~\% a la inserción de lecturas y un 25~\% a la actualización de humedad, más que \tb{idx\_lectura\_fecha} (3 y 18~\%), que sí se usa.
 
 \subsection{Complejidad operacional por encima del millón de registros}
 \label{sec:extra}
@@ -3428,7 +3465,7 @@ El modelo cliente-servidor dejaría de ser suficiente en otro escenario: una pla
 \item Los índices no son una mejora universal. Solo dos de las cinco consultas se aceleraron (2.4 y casi mil veces), dos no cambiaron y una se volvió 26~\% más lenta. Solo tres de los nueve índices propuestos llegaron a usarse.
 \item La mayor ganancia aparece en las subconsultas correlacionadas: el índice convierte un costo cuadrático en uno casi lineal, y la diferencia crece con el volumen.
 \item Para series de tiempo guardadas en orden de llegada, un BRIN ofrece casi el mismo beneficio que un B+ tree con una fracción mínima del espacio. En un sistema IoT que crece de forma indefinida, esa diferencia pesa.
-\item Todo índice cuesta en escritura, entre 12 y 75~\% en nuestras pruebas, y el peor caso aparece al actualizar columnas incluidas en índices. En tablas que reciben datos de forma continua, cada índice debe justificarse con mediciones.
+\item Todo índice cuesta en escritura, entre 12 y 75~\% en nuestras pruebas, y el peor caso aparece al actualizar columnas incluidas en índices. Medidos uno por uno, cada índice añade entre 3 y 23~\% a las inserciones y entre 11 y 60~\% a las actualizaciones de su tabla, aun cuando la columna modificada no forme parte del índice. En tablas que reciben datos de forma continua, cada índice debe justificarse con mediciones.
 \item La optimización lógica también cuenta, pero hay que verificarla. Reescribir la consulta 5 no sirvió hasta forzar la materialización de la CTE; después, redujo el tiempo a la mitad.
 \item La arquitectura cliente-servidor basta para el volumen previsto si se combina con particionamiento por fecha, índices BRIN y agregados materializados. Las alternativas distribuidas solo se justificarían con una escala varios órdenes de magnitud mayor.
 \end{enumerate}
@@ -3505,6 +3542,7 @@ Carpeta con todos los scripts: \enlaceRepositorio
 \tb{scripts/ejecutar\_todo.py} & Orquestador: carga, experimento y gráficos. \\
 \tb{scripts/experimento.py} & Mediciones, reanudables por tramos. \\
 \tb{scripts/graficos.py} & Figuras del informe. \\
+\tb{scripts/escritura\_indices.py} & Costo de escritura índice por índice (Tabla~\ref{tab:escritura_indices}). \\
 \tb{scripts/construir\_informe.py} & Genera las tablas y listados de este informe desde los resultados. \\
 \tb{web/} & Aplicación web (MVP), Sección~\ref{sec:web}. \\
 \bottomrule
