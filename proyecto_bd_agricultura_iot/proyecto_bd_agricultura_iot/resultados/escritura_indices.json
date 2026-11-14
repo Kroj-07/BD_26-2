@@ -1,0 +1,655 @@
+{
+ "plataforma": "Contenedor Docker postgres:16-alpine (PostgreSQL 16.15) limitado a 1 CPU (cgroup 100000/100000) y 4 GB de RAM, sobre Windows 11 con AMD Ryzen 9 9955HX",
+ "version": "PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+ "ajustes": {
+  "shared_buffers": "128MB",
+  "work_mem": "4MB",
+  "effective_cache_size": "4GB",
+  "max_parallel_workers_per_gather": "2",
+  "random_page_cost": "4"
+ },
+ "iteraciones": 5,
+ "indices": {
+  "idx_lectura_fecha": "Lectura_Suelo",
+  "idx_campania_vigente": "Campania",
+  "idx_dispositivo_zona": "Dispositivo",
+  "idx_evento_parcela_fecha": "Evento_Riego",
+  "idx_cosecha_campania": "Cosecha",
+  "idx_lectura_disp_humedad": "Lectura_Suelo",
+  "idx_cosecha_categoria": "Cosecha",
+  "idx_campania_cultivo": "Campania",
+  "idx_alerta_humedad_baja": "Alerta"
+ },
+ "resultados": [
+  {
+   "configuracion": "sin",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Insercion de 20 000 lecturas",
+   "filas": 20000,
+   "tiempos": [
+    334.49,
+    301.547,
+    337.852,
+    303.276,
+    327.101
+   ],
+   "promedio": 320.8532,
+   "desviacion": 17.289
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Actualizacion de humedad (sensores 1 a 60)",
+   "filas": 17083,
+   "tiempos": [
+    157.251,
+    45.653,
+    48.868,
+    52.73,
+    43.372
+   ],
+   "promedio": 69.5748,
+   "desviacion": 49.1388
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Evento_Riego",
+   "operacion": "Insercion de 5 000 eventos de riego",
+   "filas": 5000,
+   "tiempos": [
+    147.391,
+    143.872,
+    145.358,
+    143.517,
+    144.135
+   ],
+   "promedio": 144.8546,
+   "desviacion": 1.5779
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Evento_Riego",
+   "operacion": "Actualizacion de duracion (5 000 eventos)",
+   "filas": 5000,
+   "tiempos": [
+    22.472,
+    16.898,
+    19.544,
+    18.058,
+    17.038
+   ],
+   "promedio": 18.802,
+   "desviacion": 2.3081
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Cosecha",
+   "operacion": "Insercion de 5 000 cosechas",
+   "filas": 5000,
+   "tiempos": [
+    78.917,
+    74.631,
+    78.733,
+    76.068,
+    76.748
+   ],
+   "promedio": 77.0194,
+   "desviacion": 1.818
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Cosecha",
+   "operacion": "Actualizacion de cantidad (5 000 cosechas)",
+   "filas": 5000,
+   "tiempos": [
+    14.1,
+    10.072,
+    9.851,
+    10.202,
+    10.174
+   ],
+   "promedio": 10.8798,
+   "desviacion": 1.8054
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Campania",
+   "operacion": "Insercion de 5 000 campanias",
+   "filas": 5000,
+   "tiempos": [
+    94.963,
+    85.347,
+    85.382,
+    85.691,
+    88.496
+   ],
+   "promedio": 87.9758,
+   "desviacion": 4.1216
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Campania",
+   "operacion": "Actualizacion de estado (todas las campanias)",
+   "filas": 1500,
+   "tiempos": [
+    4.851,
+    4.189,
+    4.244,
+    4.543,
+    4.186
+   ],
+   "promedio": 4.4026,
+   "desviacion": 0.2909
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Dispositivo",
+   "operacion": "Insercion de 5 000 dispositivos",
+   "filas": 5000,
+   "tiempos": [
+    78.401,
+    78.533,
+    77.667,
+    79.001,
+    82.049
+   ],
+   "promedio": 79.1302,
+   "desviacion": 1.7004
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Dispositivo",
+   "operacion": "Actualizacion de estado (todos los dispositivos)",
+   "filas": 2800,
+   "tiempos": [
+    10.033,
+    8.546,
+    7.904,
+    8.01,
+    8.395
+   ],
+   "promedio": 8.5776,
+   "desviacion": 0.8556
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Alerta",
+   "operacion": "Insercion de 5 000 alertas de humedad baja",
+   "filas": 5000,
+   "tiempos": [
+    88.671,
+    84.372,
+    90.075,
+    77.715,
+    82.104
+   ],
+   "promedio": 84.5874,
+   "desviacion": 5.0058
+  },
+  {
+   "configuracion": "sin",
+   "tabla": "Alerta",
+   "operacion": "Actualizacion de atencion (5 000 alertas)",
+   "filas": 5000,
+   "tiempos": [
+    22.588,
+    23.167,
+    28.42,
+    23.337,
+    20.192
+   ],
+   "promedio": 23.5408,
+   "desviacion": 3.0046
+  },
+  {
+   "configuracion": "idx_lectura_fecha",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Insercion de 20 000 lecturas",
+   "filas": 20000,
+   "tiempos": [
+    322.519,
+    338.256,
+    355.821,
+    315.682,
+    314.094
+   ],
+   "promedio": 329.2744,
+   "desviacion": 17.651
+  },
+  {
+   "configuracion": "idx_lectura_fecha",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Actualizacion de humedad (sensores 1 a 60)",
+   "filas": 17083,
+   "tiempos": [
+    109.716,
+    81.19,
+    72.777,
+    64.35,
+    83.514
+   ],
+   "promedio": 82.3094,
+   "desviacion": 17.0824
+  },
+  {
+   "configuracion": "idx_campania_vigente",
+   "tabla": "Campania",
+   "operacion": "Insercion de 5 000 campanias",
+   "filas": 5000,
+   "tiempos": [
+    102.187,
+    86.665,
+    90.116,
+    87.043,
+    86.824
+   ],
+   "promedio": 90.567,
+   "desviacion": 6.6499
+  },
+  {
+   "configuracion": "idx_campania_vigente",
+   "tabla": "Campania",
+   "operacion": "Actualizacion de estado (todas las campanias)",
+   "filas": 1500,
+   "tiempos": [
+    5.299,
+    4.745,
+    4.803,
+    4.818,
+    4.691
+   ],
+   "promedio": 4.8712,
+   "desviacion": 0.2444
+  },
+  {
+   "configuracion": "idx_dispositivo_zona",
+   "tabla": "Dispositivo",
+   "operacion": "Insercion de 5 000 dispositivos",
+   "filas": 5000,
+   "tiempos": [
+    84.421,
+    86.725,
+    85.2,
+    85.939,
+    89.497
+   ],
+   "promedio": 86.3564,
+   "desviacion": 1.953
+  },
+  {
+   "configuracion": "idx_dispositivo_zona",
+   "tabla": "Dispositivo",
+   "operacion": "Actualizacion de estado (todos los dispositivos)",
+   "filas": 2800,
+   "tiempos": [
+    14.126,
+    15.008,
+    13.707,
+    10.11,
+    10.134
+   ],
+   "promedio": 12.617,
+   "desviacion": 2.3255
+  },
+  {
+   "configuracion": "idx_evento_parcela_fecha",
+   "tabla": "Evento_Riego",
+   "operacion": "Insercion de 5 000 eventos de riego",
+   "filas": 5000,
+   "tiempos": [
+    151.923,
+    161.766,
+    161.598,
+    161.958,
+    161.697
+   ],
+   "promedio": 159.7884,
+   "desviacion": 4.3989
+  },
+  {
+   "configuracion": "idx_evento_parcela_fecha",
+   "tabla": "Evento_Riego",
+   "operacion": "Actualizacion de duracion (5 000 eventos)",
+   "filas": 5000,
+   "tiempos": [
+    25.313,
+    24.178,
+    27.344,
+    35.03,
+    29.161
+   ],
+   "promedio": 28.2052,
+   "desviacion": 4.2666
+  },
+  {
+   "configuracion": "idx_cosecha_campania",
+   "tabla": "Cosecha",
+   "operacion": "Insercion de 5 000 cosechas",
+   "filas": 5000,
+   "tiempos": [
+    81.214,
+    84.665,
+    78.408,
+    79.843,
+    84.888
+   ],
+   "promedio": 81.8036,
+   "desviacion": 2.8906
+  },
+  {
+   "configuracion": "idx_cosecha_campania",
+   "tabla": "Cosecha",
+   "operacion": "Actualizacion de cantidad (5 000 cosechas)",
+   "filas": 5000,
+   "tiempos": [
+    15.259,
+    12.906,
+    13.572,
+    24.631,
+    12.953
+   ],
+   "promedio": 15.8642,
+   "desviacion": 4.9926
+  },
+  {
+   "configuracion": "idx_lectura_disp_humedad",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Insercion de 20 000 lecturas",
+   "filas": 20000,
+   "tiempos": [
+    376.667,
+    334.422,
+    358.21,
+    335.947,
+    348.486
+   ],
+   "promedio": 350.7464,
+   "desviacion": 17.4514
+  },
+  {
+   "configuracion": "idx_lectura_disp_humedad",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Actualizacion de humedad (sensores 1 a 60)",
+   "filas": 17083,
+   "tiempos": [
+    159.601,
+    69.193,
+    79.592,
+    59.843,
+    68.182
+   ],
+   "promedio": 87.2822,
+   "desviacion": 41.0308
+  },
+  {
+   "configuracion": "idx_cosecha_categoria",
+   "tabla": "Cosecha",
+   "operacion": "Insercion de 5 000 cosechas",
+   "filas": 5000,
+   "tiempos": [
+    93.044,
+    109.116,
+    87.618,
+    95.188,
+    89.829
+   ],
+   "promedio": 94.959,
+   "desviacion": 8.4313
+  },
+  {
+   "configuracion": "idx_cosecha_categoria",
+   "tabla": "Cosecha",
+   "operacion": "Actualizacion de cantidad (5 000 cosechas)",
+   "filas": 5000,
+   "tiempos": [
+    20.1,
+    16.584,
+    17.817,
+    16.87,
+    15.499
+   ],
+   "promedio": 17.374,
+   "desviacion": 1.7336
+  },
+  {
+   "configuracion": "idx_campania_cultivo",
+   "tabla": "Campania",
+   "operacion": "Insercion de 5 000 campanias",
+   "filas": 5000,
+   "tiempos": [
+    102.45,
+    99.882,
+    93.624,
+    99.921,
+    88.934
+   ],
+   "promedio": 96.9622,
+   "desviacion": 5.5451
+  },
+  {
+   "configuracion": "idx_campania_cultivo",
+   "tabla": "Campania",
+   "operacion": "Actualizacion de estado (todas las campanias)",
+   "filas": 1500,
+   "tiempos": [
+    6.021,
+    5.953,
+    6.21,
+    5.465,
+    5.293
+   ],
+   "promedio": 5.7884,
+   "desviacion": 0.3902
+  },
+  {
+   "configuracion": "idx_alerta_humedad_baja",
+   "tabla": "Alerta",
+   "operacion": "Insercion de 5 000 alertas de humedad baja",
+   "filas": 5000,
+   "tiempos": [
+    119.496,
+    98.455,
+    93.43,
+    93.546,
+    103.036
+   ],
+   "promedio": 101.5926,
+   "desviacion": 10.7684
+  },
+  {
+   "configuracion": "idx_alerta_humedad_baja",
+   "tabla": "Alerta",
+   "operacion": "Actualizacion de atencion (5 000 alertas)",
+   "filas": 5000,
+   "tiempos": [
+    39.854,
+    34.786,
+    36.237,
+    36.06,
+    36.6
+   ],
+   "promedio": 36.7074,
+   "desviacion": 1.8871
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Insercion de 20 000 lecturas",
+   "filas": 20000,
+   "tiempos": [
+    445.814,
+    446.135,
+    423.652,
+    421.881,
+    376.101
+   ],
+   "promedio": 422.7166,
+   "desviacion": 28.5329
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Lectura_Suelo",
+   "operacion": "Actualizacion de humedad (sensores 1 a 60)",
+   "filas": 17083,
+   "tiempos": [
+    142.286,
+    100.157,
+    92.515,
+    89.579,
+    89.744
+   ],
+   "promedio": 102.8562,
+   "desviacion": 22.4563
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Evento_Riego",
+   "operacion": "Insercion de 5 000 eventos de riego",
+   "filas": 5000,
+   "tiempos": [
+    171.312,
+    187.508,
+    177.023,
+    170.326,
+    179.7
+   ],
+   "promedio": 177.1738,
+   "desviacion": 6.9723
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Evento_Riego",
+   "operacion": "Actualizacion de duracion (5 000 eventos)",
+   "filas": 5000,
+   "tiempos": [
+    33.535,
+    26.564,
+    24.032,
+    25.016,
+    32.362
+   ],
+   "promedio": 28.3018,
+   "desviacion": 4.3566
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Cosecha",
+   "operacion": "Insercion de 5 000 cosechas",
+   "filas": 5000,
+   "tiempos": [
+    94.247,
+    92.381,
+    87.363,
+    90.096,
+    88.799
+   ],
+   "promedio": 90.5772,
+   "desviacion": 2.7589
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Cosecha",
+   "operacion": "Actualizacion de cantidad (5 000 cosechas)",
+   "filas": 5000,
+   "tiempos": [
+    20.65,
+    18.114,
+    18.83,
+    17.936,
+    17.607
+   ],
+   "promedio": 18.6274,
+   "desviacion": 1.216
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Campania",
+   "operacion": "Insercion de 5 000 campanias",
+   "filas": 5000,
+   "tiempos": [
+    97.712,
+    95.993,
+    97.404,
+    94.946,
+    94.275
+   ],
+   "promedio": 96.066,
+   "desviacion": 1.4972
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Campania",
+   "operacion": "Actualizacion de estado (todas las campanias)",
+   "filas": 1500,
+   "tiempos": [
+    6.22,
+    5.621,
+    5.517,
+    5.454,
+    5.356
+   ],
+   "promedio": 5.6336,
+   "desviacion": 0.3417
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Dispositivo",
+   "operacion": "Insercion de 5 000 dispositivos",
+   "filas": 5000,
+   "tiempos": [
+    153.284,
+    86.461,
+    81.695,
+    83.515,
+    82.638
+   ],
+   "promedio": 97.5186,
+   "desviacion": 31.2249
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Dispositivo",
+   "operacion": "Actualizacion de estado (todos los dispositivos)",
+   "filas": 2800,
+   "tiempos": [
+    12.646,
+    10.527,
+    10.286,
+    11.184,
+    10.307
+   ],
+   "promedio": 10.99,
+   "desviacion": 0.9945
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Alerta",
+   "operacion": "Insercion de 5 000 alertas de humedad baja",
+   "filas": 5000,
+   "tiempos": [
+    97.766,
+    91.506,
+    91.202,
+    86.087,
+    94.879
+   ],
+   "promedio": 92.288,
+   "desviacion": 4.3865
+  },
+  {
+   "configuracion": "todos",
+   "tabla": "Alerta",
+   "operacion": "Actualizacion de atencion (5 000 alertas)",
+   "filas": 5000,
+   "tiempos": [
+    45.557,
+    34.941,
+    40.244,
+    36.044,
+    40.834
+   ],
+   "promedio": 39.524,
+   "desviacion": 4.2351
+  }
+ ]
+}

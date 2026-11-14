@@ -1,0 +1,43 @@
+configuracion,tabla,operacion,filas,it1,it2,it3,it4,it5,promedio,desviacion
+sin,Lectura_Suelo,Insercion de 20 000 lecturas,20000,334.490,301.547,337.852,303.276,327.101,320.8532,17.2890
+sin,Lectura_Suelo,Actualizacion de humedad (sensores 1 a 60),17083,157.251,45.653,48.868,52.730,43.372,69.5748,49.1388
+sin,Evento_Riego,Insercion de 5 000 eventos de riego,5000,147.391,143.872,145.358,143.517,144.135,144.8546,1.5779
+sin,Evento_Riego,Actualizacion de duracion (5 000 eventos),5000,22.472,16.898,19.544,18.058,17.038,18.8020,2.3081
+sin,Cosecha,Insercion de 5 000 cosechas,5000,78.917,74.631,78.733,76.068,76.748,77.0194,1.8180
+sin,Cosecha,Actualizacion de cantidad (5 000 cosechas),5000,14.100,10.072,9.851,10.202,10.174,10.8798,1.8054
+sin,Campania,Insercion de 5 000 campanias,5000,94.963,85.347,85.382,85.691,88.496,87.9758,4.1216
+sin,Campania,Actualizacion de estado (todas las campanias),1500,4.851,4.189,4.244,4.543,4.186,4.4026,0.2909
+sin,Dispositivo,Insercion de 5 000 dispositivos,5000,78.401,78.533,77.667,79.001,82.049,79.1302,1.7004
+sin,Dispositivo,Actualizacion de estado (todos los dispositivos),2800,10.033,8.546,7.904,8.010,8.395,8.5776,0.8556
+sin,Alerta,Insercion de 5 000 alertas de humedad baja,5000,88.671,84.372,90.075,77.715,82.104,84.5874,5.0058
+sin,Alerta,Actualizacion de atencion (5 000 alertas),5000,22.588,23.167,28.420,23.337,20.192,23.5408,3.0046
+idx_lectura_fecha,Lectura_Suelo,Insercion de 20 000 lecturas,20000,322.519,338.256,355.821,315.682,314.094,329.2744,17.6510
+idx_lectura_fecha,Lectura_Suelo,Actualizacion de humedad (sensores 1 a 60),17083,109.716,81.190,72.777,64.350,83.514,82.3094,17.0824
+idx_campania_vigente,Campania,Insercion de 5 000 campanias,5000,102.187,86.665,90.116,87.043,86.824,90.5670,6.6499
+idx_campania_vigente,Campania,Actualizacion de estado (todas las campanias),1500,5.299,4.745,4.803,4.818,4.691,4.8712,0.2444
+idx_dispositivo_zona,Dispositivo,Insercion de 5 000 dispositivos,5000,84.421,86.725,85.200,85.939,89.497,86.3564,1.9530
+idx_dispositivo_zona,Dispositivo,Actualizacion de estado (todos los dispositivos),2800,14.126,15.008,13.707,10.110,10.134,12.6170,2.3255
+idx_evento_parcela_fecha,Evento_Riego,Insercion de 5 000 eventos de riego,5000,151.923,161.766,161.598,161.958,161.697,159.7884,4.3989
+idx_evento_parcela_fecha,Evento_Riego,Actualizacion de duracion (5 000 eventos),5000,25.313,24.178,27.344,35.030,29.161,28.2052,4.2666
+idx_cosecha_campania,Cosecha,Insercion de 5 000 cosechas,5000,81.214,84.665,78.408,79.843,84.888,81.8036,2.8906
+idx_cosecha_campania,Cosecha,Actualizacion de cantidad (5 000 cosechas),5000,15.259,12.906,13.572,24.631,12.953,15.8642,4.9926
+idx_lectura_disp_humedad,Lectura_Suelo,Insercion de 20 000 lecturas,20000,376.667,334.422,358.210,335.947,348.486,350.7464,17.4514
+idx_lectura_disp_humedad,Lectura_Suelo,Actualizacion de humedad (sensores 1 a 60),17083,159.601,69.193,79.592,59.843,68.182,87.2822,41.0308
+idx_cosecha_categoria,Cosecha,Insercion de 5 000 cosechas,5000,93.044,109.116,87.618,95.188,89.829,94.9590,8.4313
+idx_cosecha_categoria,Cosecha,Actualizacion de cantidad (5 000 cosechas),5000,20.100,16.584,17.817,16.870,15.499,17.3740,1.7336
+idx_campania_cultivo,Campania,Insercion de 5 000 campanias,5000,102.450,99.882,93.624,99.921,88.934,96.9622,5.5451
+idx_campania_cultivo,Campania,Actualizacion de estado (todas las campanias),1500,6.021,5.953,6.210,5.465,5.293,5.7884,0.3902
+idx_alerta_humedad_baja,Alerta,Insercion de 5 000 alertas de humedad baja,5000,119.496,98.455,93.430,93.546,103.036,101.5926,10.7684
+idx_alerta_humedad_baja,Alerta,Actualizacion de atencion (5 000 alertas),5000,39.854,34.786,36.237,36.060,36.600,36.7074,1.8871
+todos,Lectura_Suelo,Insercion de 20 000 lecturas,20000,445.814,446.135,423.652,421.881,376.101,422.7166,28.5329
+todos,Lectura_Suelo,Actualizacion de humedad (sensores 1 a 60),17083,142.286,100.157,92.515,89.579,89.744,102.8562,22.4563
+todos,Evento_Riego,Insercion de 5 000 eventos de riego,5000,171.312,187.508,177.023,170.326,179.700,177.1738,6.9723
+todos,Evento_Riego,Actualizacion de duracion (5 000 eventos),5000,33.535,26.564,24.032,25.016,32.362,28.3018,4.3566
+todos,Cosecha,Insercion de 5 000 cosechas,5000,94.247,92.381,87.363,90.096,88.799,90.5772,2.7589
+todos,Cosecha,Actualizacion de cantidad (5 000 cosechas),5000,20.650,18.114,18.830,17.936,17.607,18.6274,1.2160
+todos,Campania,Insercion de 5 000 campanias,5000,97.712,95.993,97.404,94.946,94.275,96.0660,1.4972
+todos,Campania,Actualizacion de estado (todas las campanias),1500,6.220,5.621,5.517,5.454,5.356,5.6336,0.3417
+todos,Dispositivo,Insercion de 5 000 dispositivos,5000,153.284,86.461,81.695,83.515,82.638,97.5186,31.2249
+todos,Dispositivo,Actualizacion de estado (todos los dispositivos),2800,12.646,10.527,10.286,11.184,10.307,10.9900,0.9945
+todos,Alerta,Insercion de 5 000 alertas de humedad baja,5000,97.766,91.506,91.202,86.087,94.879,92.2880,4.3865
+todos,Alerta,Actualizacion de atencion (5 000 alertas),5000,45.557,34.941,40.244,36.044,40.834,39.5240,4.2351
