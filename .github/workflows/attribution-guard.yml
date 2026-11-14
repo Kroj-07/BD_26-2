@@ -1,0 +1,33 @@
+name: attribution-guard
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  attribution-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Mensajes de los commits
+        env:
+          EVENTO: ${{ github.event_name }}
+          ANTES: ${{ github.event.before }}
+          DESPUES: ${{ github.event.after }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          CABEZA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENTO" = "pull_request" ]; then
+            bash .github/attribution-guard.sh range "$BASE..$CABEZA"
+          elif [ -z "$ANTES" ] || ! git cat-file -e "$ANTES^{commit}" 2>/dev/null; then
+            # rama nueva o historial reescrito: se revisa todo lo alcanzable
+            bash .github/attribution-guard.sh range "$DESPUES"
+          else
+            bash .github/attribution-guard.sh range "$ANTES..$DESPUES"
+          fi
+
+      - name: Archivos rastreados
+        run: bash .github/attribution-guard.sh tree
