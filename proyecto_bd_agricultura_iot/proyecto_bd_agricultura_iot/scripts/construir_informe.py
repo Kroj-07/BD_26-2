@@ -111,7 +111,7 @@ def info_tabla(cur, t):
 
 
 def esquema_relacional(cur):
-    out = ["\\begin{itemize}[leftmargin=1.2em,itemsep=0.3em]"]
+    out = ["\\begin{itemize}[leftmargin=1.2em,itemsep=0.3em]\\raggedright"]
     for t in TABLAS:
         cols, pk, fk, _, _ = info_tabla(cur, t)
         partes = []
@@ -155,7 +155,7 @@ def diccionario(cur):
                 ", ".join(claves), d))
         out.append("\\bottomrule\n\\end{longtable}}\n")
         if checks:
-            out.append("{\\footnotesize\\textbf{Restricciones CHECK:} " + "; ".join(
+            out.append("{\\footnotesize\\raggedright\\textbf{Restricciones CHECK:} " + "; ".join(
                 "\\tb{%s}: \\tb{%s}" % (esc(n), esc(d.replace("CHECK ", "")))
                 for n, d in checks) + "\\par}\n\\medskip\n")
     return "".join(out)
@@ -213,7 +213,8 @@ def acceso(plan, q):
             abrev = {"Seq Scan": "Seq", "Parallel Seq Scan": "Seq paralelo",
                      "Index Only Scan": "Index Only", "Index Scan": "Index",
                      "Bitmap Heap Scan": "Bitmap"}.get(nodo, nodo)
-            s = abrev + (" (%s)" % esc(m.group(1)) if m else "")
+            s = abrev + (" (%s)" % esc(m.group(1)).replace("\\_", "\\_\\allowbreak{}")
+                         if m else "")
             if "Memoize" in plan and "Index" in nodo:
                 s = "Nested Loop + " + s
             return s
@@ -468,7 +469,7 @@ def main():
         ["Consulta", "Índices"] + ESC, filas,
         "Método de acceso a la tabla principal de cada consulta (C1 y C3: lecturas; C2 y C5: "
         "riegos; C4: cosechas).", "tab:planes",
-        ancho="llp{3.1cm}p{3.1cm}p{3.1cm}p{3.1cm}", resize=True)
+        ancho="ll" + ">{\\raggedright\\arraybackslash}p{3.1cm}" * 4, resize=True)
     for q in range(1, 6):
         for cond in ("sin", "con"):
             rep["%%%%PLAN:%d:%s%%%%" % (q, cond)] = listado(pl[(q, cond)], "plano")

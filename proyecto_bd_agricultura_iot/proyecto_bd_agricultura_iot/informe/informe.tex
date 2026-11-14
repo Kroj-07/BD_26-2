@@ -53,6 +53,7 @@
 \begin{document}
 
 % ================================================================== PORTADA
+\hypersetup{pageanchor=false}
 \begin{titlepage}
 \centering
 {\large UNIVERSIDAD DE INGENIERÍA Y TECNOLOGÍA\par}
@@ -78,6 +79,7 @@ Ojeda Rios, Brenner Humberto\par
 \vfill
 {\normalsize Lima, Perú\par}
 \end{titlepage}
+\hypersetup{pageanchor=true}
 
 \tableofcontents
 \newpage
@@ -375,7 +377,7 @@ La Figura~\ref{fig:er} presenta el diagrama. Usamos notación de Chen: rectángu
 
 El esquema tiene 18 relaciones: 15 provienen de las entidades del modelo conceptual, dos implementan relaciones con atributos propios (\tb{Aplicacion\_Insumo} y \tb{Mantenimiento}) y una es la bitácora técnica \tb{Auditoria\_Campania}. Las claves primarias van subrayadas y las claves foráneas en cursiva, con una flecha hacia la tabla referenciada. La lista se generó desde el catálogo de PostgreSQL, por lo que coincide exactamente con lo implementado.
 
-\begin{itemize}[leftmargin=1.2em,itemsep=0.3em]
+\begin{itemize}[leftmargin=1.2em,itemsep=0.3em]\raggedright
 \item \textsc{Fundo}(\pk{id\_fundo}, nombre, departamento, provincia, distrito, area\_total\_ha, latitud, longitud, fecha\_registro)
 \item \textsc{Parcela}(\pk{id\_parcela}, \fk{id\_fundo}{Fundo}, codigo\_parcela, area\_ha, tipo\_suelo, pendiente\_pct, fecha\_habilitacion)
 \item \textsc{Zona\_Manejo}(\pk{\fk{id\_parcela}{Parcela}}, \pk{num\_zona}, area\_ha, descripcion)
@@ -506,7 +508,7 @@ Predio agrícola de la empresa, ubicado en un distrito del Perú.
 \texttt{fecha\_registro} & DATE & No &  & Fecha en que el fundo se registró en el sistema. Por defecto: \texttt{CURRENT\_DATE}. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_fundo\_area}: \tb{((area\_total\_ha > (0)))}; \tb{ck\_fundo\_lat}: \tb{(((latitud >= ('-19')) AND (latitud <= (1))))}; \tb{ck\_fundo\_lon}: \tb{(((longitud >= ('-82')) AND (longitud <= ('-68'))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_fundo\_area}: \tb{((area\_total\_ha > (0)))}; \tb{ck\_fundo\_lat}: \tb{(((latitud >= ('-19')) AND (latitud <= (1))))}; \tb{ck\_fundo\_lon}: \tb{(((longitud >= ('-82')) AND (longitud <= ('-68'))))}\par}
 \medskip
 \subsubsection*{Parcela}
 Unidad productiva dentro de un fundo; es la base de cada campaña.
@@ -525,7 +527,7 @@ Unidad productiva dentro de un fundo; es la base de cada campaña.
 \texttt{fecha\_habilitacion} & DATE & Sí &  & Fecha en que la parcela entró en producción. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_parcela\_area}: \tb{((area\_ha > (0)))}; \tb{ck\_parcela\_pend}: \tb{(((pendiente\_pct >= (0)) AND (pendiente\_pct <= (100))))}; \tb{ck\_parcela\_suelo}: \tb{(((tipo\_suelo) = ANY ((ARRAY['Arenoso', 'Franco', 'Franco arenoso', 'Franco arcilloso', 'Arcilloso']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_parcela\_area}: \tb{((area\_ha > (0)))}; \tb{ck\_parcela\_pend}: \tb{(((pendiente\_pct >= (0)) AND (pendiente\_pct <= (100))))}; \tb{ck\_parcela\_suelo}: \tb{(((tipo\_suelo) = ANY ((ARRAY['Arenoso', 'Franco', 'Franco arenoso', 'Franco arcilloso', 'Arcilloso']))))}\par}
 \medskip
 \subsubsection*{Zona\_Manejo}
 Subdivisión de una parcela con manejo homogéneo de riego y nutrición (entidad débil).
@@ -541,7 +543,7 @@ Subdivisión de una parcela con manejo homogéneo de riego y nutrición (entidad
 \texttt{descripcion} & VARCHAR(80) & Sí &  & Descripción libre de la zona. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_zona\_area}: \tb{((area\_ha > (0)))}; \tb{ck\_zona\_num}: \tb{((num\_zona > 0))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_zona\_area}: \tb{((area\_ha > (0)))}; \tb{ck\_zona\_num}: \tb{((num\_zona > 0))}\par}
 \medskip
 \subsubsection*{Cultivo}
 Catálogo de especies con sus rangos agronómicos óptimos.
@@ -562,7 +564,7 @@ Catálogo de especies con sus rangos agronómicos óptimos.
 \texttt{ce\_maxima\_ds\_m} & NUMERIC(5,2) & Sí &  & Conductividad eléctrica máxima tolerada (dS/m). \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_cultivo\_cic}: \tb{((ciclo\_dias > 0))}; \tb{ck\_cultivo\_hum}: \tb{((humedad\_optima\_min < humedad\_optima\_max))}; \tb{ck\_cultivo\_ph}: \tb{(((ph\_optimo\_min < ph\_optimo\_max) AND (ph\_optimo\_min >= (0)) AND (ph\_optimo\_max <= (14))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_cultivo\_cic}: \tb{((ciclo\_dias > 0))}; \tb{ck\_cultivo\_hum}: \tb{((humedad\_optima\_min < humedad\_optima\_max))}; \tb{ck\_cultivo\_ph}: \tb{(((ph\_optimo\_min < ph\_optimo\_max) AND (ph\_optimo\_min >= (0)) AND (ph\_optimo\_max <= (14))))}\par}
 \medskip
 \subsubsection*{Operario}
 Personal de campo que riega, aplica insumos, cosecha y mantiene equipos.
@@ -582,7 +584,7 @@ Personal de campo que riega, aplica insumos, cosecha y mantiene equipos.
 \texttt{fecha\_ingreso} & DATE & Sí &  & Fecha de ingreso a la empresa. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_operario\_dni}: \tb{((dni \textasciitilde{} '\textasciicircum{}[0-9]\{8\}\$'))}; \tb{ck\_operario\_rol}: \tb{(((rol) = ANY ((ARRAY['Tecnico de campo', 'Ingeniero agronomo', 'Operador de riego', 'Supervisor']))))}; \tb{ck\_operario\_tel}: \tb{(((telefono IS NULL) OR ((telefono) \textasciitilde{} '\textasciicircum{}[0-9]\{9\}\$')))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_operario\_dni}: \tb{((dni \textasciitilde{} '\textasciicircum{}[0-9]\{8\}\$'))}; \tb{ck\_operario\_rol}: \tb{(((rol) = ANY ((ARRAY['Tecnico de campo', 'Ingeniero agronomo', 'Operador de riego', 'Supervisor']))))}; \tb{ck\_operario\_tel}: \tb{(((telefono IS NULL) OR ((telefono) \textasciitilde{} '\textasciicircum{}[0-9]\{9\}\$')))}\par}
 \medskip
 \subsubsection*{Campania}
 Periodo de siembra de un cultivo en una parcela.
@@ -602,7 +604,7 @@ Periodo de siembra de un cultivo en una parcela.
 \texttt{rendimiento\_kg\_ha} & NUMERIC(10,2) & No &  & Atributo derivado: kg cosechados / área; lo mantiene un trigger. Por defecto: \texttt{0}. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_campania\_dens}: \tb{(((densidad\_plantas\_ha IS NULL) OR (densidad\_plantas\_ha > 0)))}; \tb{ck\_campania\_est}: \tb{(((estado) = ANY ((ARRAY['Planificada', 'En curso', 'Cerrada', 'Perdida']))))}; \tb{ck\_campania\_fech}: \tb{((fecha\_fin\_estimada > fecha\_siembra))}; \tb{ck\_campania\_rend}: \tb{((rendimiento\_kg\_ha >= (0)))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_campania\_dens}: \tb{(((densidad\_plantas\_ha IS NULL) OR (densidad\_plantas\_ha > 0)))}; \tb{ck\_campania\_est}: \tb{(((estado) = ANY ((ARRAY['Planificada', 'En curso', 'Cerrada', 'Perdida']))))}; \tb{ck\_campania\_fech}: \tb{((fecha\_fin\_estimada > fecha\_siembra))}; \tb{ck\_campania\_rend}: \tb{((rendimiento\_kg\_ha >= (0)))}\par}
 \medskip
 \subsubsection*{Sistema\_Riego}
 Infraestructura de riego instalada en una parcela.
@@ -621,7 +623,7 @@ Infraestructura de riego instalada en una parcela.
 \texttt{estado} & VARCHAR(15) & No &  & Operativo, Averiado o Fuera de servicio. Por defecto: \texttt{'Operativo'}. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_sistema\_caudal}: \tb{((caudal\_nominal\_lph > (0)))}; \tb{ck\_sistema\_estado}: \tb{(((estado) = ANY ((ARRAY['Operativo', 'Averiado', 'Fuera de servicio']))))}; \tb{ck\_sistema\_fuente}: \tb{(((fuente\_agua) = ANY ((ARRAY['Pozo', 'Canal', 'Reservorio', 'Rio']))))}; \tb{ck\_sistema\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Goteo', 'Aspersion', 'Microaspersion', 'Gravedad tecnificada']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_sistema\_caudal}: \tb{((caudal\_nominal\_lph > (0)))}; \tb{ck\_sistema\_estado}: \tb{(((estado) = ANY ((ARRAY['Operativo', 'Averiado', 'Fuera de servicio']))))}; \tb{ck\_sistema\_fuente}: \tb{(((fuente\_agua) = ANY ((ARRAY['Pozo', 'Canal', 'Reservorio', 'Rio']))))}; \tb{ck\_sistema\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Goteo', 'Aspersion', 'Microaspersion', 'Gravedad tecnificada']))))}\par}
 \medskip
 \subsubsection*{Dispositivo}
 Superclase de todo equipo IoT instalado en campo.
@@ -641,7 +643,7 @@ Superclase de todo equipo IoT instalado en campo.
 \texttt{num\_zona} & SMALLINT & No & FK $\to$ Zona\_Manejo & Zona de manejo donde está instalado. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_dispositivo\_est}: \tb{(((estado) = ANY ((ARRAY['Activo', 'Inactivo', 'Mantenimiento', 'Baja']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_dispositivo\_est}: \tb{(((estado) = ANY ((ARRAY['Activo', 'Inactivo', 'Mantenimiento', 'Baja']))))}\par}
 \medskip
 \subsubsection*{Sensor}
 Subclase de Dispositivo que mide variables del suelo.
@@ -660,7 +662,7 @@ Subclase de Dispositivo que mide variables del suelo.
 \texttt{rango\_max} & NUMERIC(7,2) & Sí &  & Límite superior de medición declarado por el fabricante. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_sensor\_frec}: \tb{((frecuencia\_min > 0))}; \tb{ck\_sensor\_prof}: \tb{(((profundidad\_cm >= 0) AND (profundidad\_cm <= 200)))}; \tb{ck\_sensor\_rango}: \tb{(((rango\_min IS NULL) OR (rango\_max IS NULL) OR (rango\_min < rango\_max)))}; \tb{ck\_sensor\_tipo}: \tb{(((tipo\_sensor) = ANY ((ARRAY['Humedad', 'Multiparametro', 'pH', 'Conductividad', 'Temperatura']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_sensor\_frec}: \tb{((frecuencia\_min > 0))}; \tb{ck\_sensor\_prof}: \tb{(((profundidad\_cm >= 0) AND (profundidad\_cm <= 200)))}; \tb{ck\_sensor\_rango}: \tb{(((rango\_min IS NULL) OR (rango\_max IS NULL) OR (rango\_min < rango\_max)))}; \tb{ck\_sensor\_tipo}: \tb{(((tipo\_sensor) = ANY ((ARRAY['Humedad', 'Multiparametro', 'pH', 'Conductividad', 'Temperatura']))))}\par}
 \medskip
 \subsubsection*{Controlador}
 Subclase de Dispositivo que abre y cierra válvulas de un sistema de riego.
@@ -676,7 +678,7 @@ Subclase de Dispositivo que abre y cierra válvulas de un sistema de riego.
 \texttt{tipo\_valvula} & VARCHAR(20) & No &  & Solenoide, hidráulica o manual motorizada. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_controlador\_cau}: \tb{((caudal\_max\_lps > (0)))}; \tb{ck\_controlador\_val}: \tb{(((tipo\_valvula) = ANY ((ARRAY['Solenoide', 'Hidraulica', 'Manual motorizada']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_controlador\_cau}: \tb{((caudal\_max\_lps > (0)))}; \tb{ck\_controlador\_val}: \tb{(((tipo\_valvula) = ANY ((ARRAY['Solenoide', 'Hidraulica', 'Manual motorizada']))))}\par}
 \medskip
 \subsubsection*{Lectura\_Suelo}
 Medición enviada por un sensor en un instante (entidad débil).
@@ -695,7 +697,7 @@ Medición enviada por un sensor en un instante (entidad débil).
 \texttt{bateria\_pct} & SMALLINT & Sí &  & Carga de batería del equipo al enviar (\%). \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_lectura\_bat}: \tb{(((bateria\_pct IS NULL) OR ((bateria\_pct >= 0) AND (bateria\_pct <= 100))))}; \tb{ck\_lectura\_ce}: \tb{(((conductividad\_ds\_m IS NULL) OR (conductividad\_ds\_m >= (0))))}; \tb{ck\_lectura\_hum}: \tb{(((humedad\_pct IS NULL) OR ((humedad\_pct >= (0)) AND (humedad\_pct <= (100)))))}; \tb{ck\_lectura\_ph}: \tb{(((ph IS NULL) OR ((ph >= (0)) AND (ph <= (14)))))}; \tb{ck\_lectura\_temp}: \tb{(((temperatura\_c IS NULL) OR ((temperatura\_c >= ('-10')) AND (temperatura\_c <= (60)))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_lectura\_bat}: \tb{(((bateria\_pct IS NULL) OR ((bateria\_pct >= 0) AND (bateria\_pct <= 100))))}; \tb{ck\_lectura\_ce}: \tb{(((conductividad\_ds\_m IS NULL) OR (conductividad\_ds\_m >= (0))))}; \tb{ck\_lectura\_hum}: \tb{(((humedad\_pct IS NULL) OR ((humedad\_pct >= (0)) AND (humedad\_pct <= (100)))))}; \tb{ck\_lectura\_ph}: \tb{(((ph IS NULL) OR ((ph >= (0)) AND (ph <= (14)))))}; \tb{ck\_lectura\_temp}: \tb{(((temperatura\_c IS NULL) OR ((temperatura\_c >= ('-10')) AND (temperatura\_c <= (60)))))}\par}
 \medskip
 \subsubsection*{Evento\_Riego}
 Riego ejecutado sobre una zona por un sistema.
@@ -716,7 +718,7 @@ Riego ejecutado sobre una zona por un sistema.
 \texttt{modo} & VARCHAR(12) & No &  & Automatico, Manual o Programado. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_evento\_dur}: \tb{(((duracion\_min > 0) AND (duracion\_min <= 720)))}; \tb{ck\_evento\_modo}: \tb{(((modo) = ANY ((ARRAY['Automatico', 'Manual', 'Programado']))))}; \tb{ck\_evento\_vol}: \tb{((volumen\_litros >= (0)))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_evento\_dur}: \tb{(((duracion\_min > 0) AND (duracion\_min <= 720)))}; \tb{ck\_evento\_modo}: \tb{(((modo) = ANY ((ARRAY['Automatico', 'Manual', 'Programado']))))}; \tb{ck\_evento\_vol}: \tb{((volumen\_litros >= (0)))}\par}
 \medskip
 \subsubsection*{Alerta}
 Aviso generado a partir de una lectura fuera de rango.
@@ -737,7 +739,7 @@ Aviso generado a partir de una lectura fuera de rango.
 \texttt{id\_operario} & INTEGER & Sí & FK $\to$ Operario & Operario que la atendió. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_alerta\_aten}: \tb{((((atendida = false) AND (fecha\_atencion IS NULL)) OR ((atendida = true) AND (fecha\_atencion IS NOT NULL))))}; \tb{ck\_alerta\_sev}: \tb{(((severidad) = ANY ((ARRAY['Baja', 'Media', 'Alta', 'Critica']))))}; \tb{ck\_alerta\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Humedad baja', 'Humedad alta', 'pH fuera de rango', 'Salinidad alta', 'Bateria baja']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_alerta\_aten}: \tb{((((atendida = false) AND (fecha\_atencion IS NULL)) OR ((atendida = true) AND (fecha\_atencion IS NOT NULL))))}; \tb{ck\_alerta\_sev}: \tb{(((severidad) = ANY ((ARRAY['Baja', 'Media', 'Alta', 'Critica']))))}; \tb{ck\_alerta\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Humedad baja', 'Humedad alta', 'pH fuera de rango', 'Salinidad alta', 'Bateria baja']))))}\par}
 \medskip
 \subsubsection*{Cosecha}
 Registro de un pase de cosecha de una campaña.
@@ -757,7 +759,7 @@ Registro de un pase de cosecha de una campaña.
 \texttt{precio\_kg\_soles} & NUMERIC(7,2) & Sí &  & Precio de venta estimado por kilogramo (S/). \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_cosecha\_cat}: \tb{(((categoria) = ANY ((ARRAY['Primera', 'Segunda', 'Tercera', 'Descarte']))))}; \tb{ck\_cosecha\_hum}: \tb{(((humedad\_producto\_pct IS NULL) OR ((humedad\_producto\_pct >= (0)) AND (humedad\_producto\_pct <= (100)))))}; \tb{ck\_cosecha\_kg}: \tb{((cantidad\_kg > (0)))}; \tb{ck\_cosecha\_prec}: \tb{(((precio\_kg\_soles IS NULL) OR (precio\_kg\_soles >= (0))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_cosecha\_cat}: \tb{(((categoria) = ANY ((ARRAY['Primera', 'Segunda', 'Tercera', 'Descarte']))))}; \tb{ck\_cosecha\_hum}: \tb{(((humedad\_producto\_pct IS NULL) OR ((humedad\_producto\_pct >= (0)) AND (humedad\_producto\_pct <= (100)))))}; \tb{ck\_cosecha\_kg}: \tb{((cantidad\_kg > (0)))}; \tb{ck\_cosecha\_prec}: \tb{(((precio\_kg\_soles IS NULL) OR (precio\_kg\_soles >= (0))))}\par}
 \medskip
 \subsubsection*{Insumo}
 Catálogo de fertilizantes, enmiendas y productos fitosanitarios.
@@ -775,7 +777,7 @@ Catálogo de fertilizantes, enmiendas y productos fitosanitarios.
 \texttt{periodo\_carencia\_dias} & SMALLINT & Sí &  & Días mínimos entre la aplicación y la cosecha. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_insumo\_car}: \tb{(((periodo\_carencia\_dias IS NULL) OR (periodo\_carencia\_dias >= 0)))}; \tb{ck\_insumo\_cost}: \tb{((costo\_unitario >= (0)))}; \tb{ck\_insumo\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Fertilizante', 'Fungicida', 'Insecticida', 'Enmienda', 'Bioestimulante']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_insumo\_car}: \tb{(((periodo\_carencia\_dias IS NULL) OR (periodo\_carencia\_dias >= 0)))}; \tb{ck\_insumo\_cost}: \tb{((costo\_unitario >= (0)))}; \tb{ck\_insumo\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Fertilizante', 'Fungicida', 'Insecticida', 'Enmienda', 'Bioestimulante']))))}\par}
 \medskip
 \subsubsection*{Aplicacion\_Insumo}
 Relación ternaria: un operario aplica un insumo en una zona de manejo.
@@ -794,7 +796,7 @@ Relación ternaria: un operario aplica un insumo en una zona de manejo.
 \texttt{metodo} & VARCHAR(20) & No &  & Fertirriego, Foliar, Al suelo o Drench. \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_aplicacion\_dos}: \tb{((dosis > (0)))}; \tb{ck\_aplicacion\_met}: \tb{(((metodo) = ANY ((ARRAY['Fertirriego', 'Foliar', 'Al suelo', 'Drench']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_aplicacion\_dos}: \tb{((dosis > (0)))}; \tb{ck\_aplicacion\_met}: \tb{(((metodo) = ANY ((ARRAY['Fertirriego', 'Foliar', 'Al suelo', 'Drench']))))}\par}
 \medskip
 \subsubsection*{Mantenimiento}
 Relación N:M entre operarios y dispositivos que atienden.
@@ -812,7 +814,7 @@ Relación N:M entre operarios y dispositivos que atienden.
 \texttt{costo} & NUMERIC(8,2) & Sí &  & Costo de la intervención (S/). \\
 \bottomrule
 \end{longtable}}
-{\footnotesize\textbf{Restricciones CHECK:} \tb{ck\_mantenimiento\_cost}: \tb{(((costo IS NULL) OR (costo >= (0))))}; \tb{ck\_mantenimiento\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Preventivo', 'Correctivo', 'Calibracion']))))}\par}
+{\footnotesize\raggedright\textbf{Restricciones CHECK:} \tb{ck\_mantenimiento\_cost}: \tb{(((costo IS NULL) OR (costo >= (0))))}; \tb{ck\_mantenimiento\_tipo}: \tb{(((tipo) = ANY ((ARRAY['Preventivo', 'Correctivo', 'Calibracion']))))}\par}
 \medskip
 \subsubsection*{Auditoria\_Campania}
 Bitácora técnica de cambios de estado de campañas (no forma parte del modelo conceptual).
@@ -1698,16 +1700,16 @@ Las validaciones y los cálculos sobre la propia fila se hacen en triggers \tb{B
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{2.6cm}X}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{3.0cm}X}
 \toprule
 \textbf{Trigger} & \textbf{Momento} & \textbf{Qué hace} \\
 \midrule
 \tb{trg\_alerta\_lectura} & AFTER INSERT en lecturas & Crea alertas de humedad baja (con severidad según el déficit) y de batería baja. \\
-\tb{trg\_evento\_riego} & BEFORE INSERT/UPDATE en riegos & Rechaza riegos con el sistema de otra parcela y calcula el volumen si no se informó. \\
-\tb{trg\_rendimiento} & AFTER INSERT/UPDATE/DELETE en cosechas & Recalcula el rendimiento por hectárea de la campaña. \\
-\tb{trg\_campania\_sin\_solape} & BEFORE INSERT/UPDATE en campañas & Impide dos campañas superpuestas en la misma parcela. \\
+\tb{trg\_evento\_riego} & BEFORE INSERT/\allowbreak{}UPDATE en riegos & Rechaza riegos con el sistema de otra parcela y calcula el volumen si no se informó. \\
+\tb{trg\_rendimiento} & AFTER INSERT/\allowbreak{}UPDATE/\allowbreak{}DELETE en cosechas & Recalcula el rendimiento por hectárea de la campaña. \\
+\tb{trg\_campania\_sin\_solape} & BEFORE INSERT/\allowbreak{}UPDATE en campañas & Impide dos campañas superpuestas en la misma parcela. \\
 \tb{trg\_auditoria\_campania} & AFTER UPDATE en campañas & Registra cada cambio de estado con usuario y fecha. \\
-\tb{trg\_sensor\_exclusivo}, \tb{trg\_controlador\_exclusivo} & BEFORE INSERT/UPDATE en subclases & Garantizan que un dispositivo pertenezca a una sola subclase. \\
+\tb{trg\_sensor\_exclusivo}, \tb{trg\_controlador\_exclusivo} & BEFORE INSERT/\allowbreak{}UPDATE en subclases & Garantizan que un dispositivo pertenezca a una sola subclase. \\
 \bottomrule
 \end{tabularx}
 \caption{Triggers implementados.}
@@ -3329,20 +3331,20 @@ C5 & 1.09 & 11.78 & 220.01 & 987.82 \\
 
 \begin{table}[H]
 \centering\small
-\resizebox{\textwidth}{!}{\begin{tabular}{llp{3.1cm}p{3.1cm}p{3.1cm}p{3.1cm}}
+\resizebox{\textwidth}{!}{\begin{tabular}{ll>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{3.1cm}}
 \toprule
 Consulta & Índices & 1K & 10K & 100K & 1M \\
 \midrule
 C1 & sin & Seq & Seq & Seq & Seq paralelo \\
- & con & Index Only (idx\_lectura\_fecha) & Index Only (idx\_lectura\_fecha) & Index Only (idx\_lectura\_fecha) & Index Only (idx\_lectura\_fecha) \\
+ & con & Index Only (idx\_\allowbreak{}lectura\_\allowbreak{}fecha) & Index Only (idx\_\allowbreak{}lectura\_\allowbreak{}fecha) & Index Only (idx\_\allowbreak{}lectura\_\allowbreak{}fecha) & Index Only (idx\_\allowbreak{}lectura\_\allowbreak{}fecha) \\
 C2 & sin & Seq & Seq & Seq & Seq paralelo \\
- & con & Seq & Seq & Seq & Nested Loop + Index (idx\_evento\_parcela\_fecha) \\
+ & con & Seq & Seq & Seq & Nested Loop + Index (idx\_\allowbreak{}evento\_\allowbreak{}parcela\_\allowbreak{}fecha) \\
 C3 & sin & Seq & Seq & Seq & Seq paralelo \\
  & con & Seq & Seq & Seq & Seq paralelo \\
 C4 & sin & Seq & Seq & Seq & Seq \\
  & con & Seq & Seq & Seq & Seq \\
 C5 & sin & Seq & Seq & Seq & Seq \\
- & con & Index Only (uq\_evento) & Index Only (uq\_evento) & Index Only (uq\_evento) & Index Only (uq\_evento) \\
+ & con & Index Only (uq\_\allowbreak{}evento) & Index Only (uq\_\allowbreak{}evento) & Index Only (uq\_\allowbreak{}evento) & Index Only (uq\_\allowbreak{}evento) \\
 \bottomrule
 \end{tabular}}
 \caption{Método de acceso a la tabla principal de cada consulta (C1 y C3: lecturas; C2 y C5: riegos; C4: cosechas).}\label{tab:planes}

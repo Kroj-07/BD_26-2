@@ -212,16 +212,16 @@ Las validaciones y los cálculos sobre la propia fila se hacen en triggers \tb{B
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{2.6cm}X}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{3.0cm}X}
 \toprule
 \textbf{Trigger} & \textbf{Momento} & \textbf{Qué hace} \\
 \midrule
 \tb{trg\_alerta\_lectura} & AFTER INSERT en lecturas & Crea alertas de humedad baja (con severidad según el déficit) y de batería baja. \\
-\tb{trg\_evento\_riego} & BEFORE INSERT/UPDATE en riegos & Rechaza riegos con el sistema de otra parcela y calcula el volumen si no se informó. \\
-\tb{trg\_rendimiento} & AFTER INSERT/UPDATE/DELETE en cosechas & Recalcula el rendimiento por hectárea de la campaña. \\
-\tb{trg\_campania\_sin\_solape} & BEFORE INSERT/UPDATE en campañas & Impide dos campañas superpuestas en la misma parcela. \\
+\tb{trg\_evento\_riego} & BEFORE INSERT/\allowbreak{}UPDATE en riegos & Rechaza riegos con el sistema de otra parcela y calcula el volumen si no se informó. \\
+\tb{trg\_rendimiento} & AFTER INSERT/\allowbreak{}UPDATE/\allowbreak{}DELETE en cosechas & Recalcula el rendimiento por hectárea de la campaña. \\
+\tb{trg\_campania\_sin\_solape} & BEFORE INSERT/\allowbreak{}UPDATE en campañas & Impide dos campañas superpuestas en la misma parcela. \\
 \tb{trg\_auditoria\_campania} & AFTER UPDATE en campañas & Registra cada cambio de estado con usuario y fecha. \\
-\tb{trg\_sensor\_exclusivo}, \tb{trg\_controlador\_exclusivo} & BEFORE INSERT/UPDATE en subclases & Garantizan que un dispositivo pertenezca a una sola subclase. \\
+\tb{trg\_sensor\_exclusivo}, \tb{trg\_controlador\_exclusivo} & BEFORE INSERT/\allowbreak{}UPDATE en subclases & Garantizan que un dispositivo pertenezca a una sola subclase. \\
 \bottomrule
 \end{tabularx}
 \caption{Triggers implementados.}
