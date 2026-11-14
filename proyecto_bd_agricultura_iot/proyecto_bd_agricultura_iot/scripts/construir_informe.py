@@ -235,13 +235,13 @@ def tabla_escritura_indices():
                 tablas.append(x["tabla"])
             ops.setdefault(x["tabla"], []).append(x["operacion"])
 
-    def celda(conf, op, base):
+    def celda(conf, op, base):   # mismo formato que tab:escritura: promedio, desv., sobrecosto
         x = r[(conf, op)]
-        txt = "%s $\\pm$ %s" % (ms(x["promedio"]), ms(x["desviacion"]))
         if base is None:
-            return [txt, "--"]
+            return [ms(x["promedio"]), ms(x["desviacion"]), "--"]
         p = 100 * (x["promedio"] / base - 1)
-        return [txt, ("+" if p >= 0 else "$-$") + num(abs(p), 0) + "~\\%"]
+        return [ms(x["promedio"]), ms(x["desviacion"]),
+                ("+" if p >= 0 else "$-$") + num(abs(p), 0) + "~\\%"]
 
     filas = []
     for t in tablas:
@@ -255,12 +255,12 @@ def tabla_escritura_indices():
             filas.append([primera, nombre] +
                          celda(conf, ins, None if conf == "sin" else base[ins]) +
                          celda(conf, act, None if conf == "sin" else base[act]))
-    return tabla(["Tabla", "Configuración", "Inserción (ms)", "Sobrecosto", "Actualización (ms)",
-                  "Sobrecosto"], filas,
+    return tabla(["Tabla", "Configuración", "Inserción (ms)", "Desv.", "Sobrecosto",
+                  "Actualización (ms)", "Desv.", "Sobrecosto"], filas,
                  "Costo de escritura índice por índice (1M, 5 iteraciones, contenedor con "
-                 "PostgreSQL 16 y un núcleo): promedio $\\pm$ desviación y sobrecosto respecto "
-                 "de la misma tabla sin índices.", "tab:escritura_indices",
-                 ancho="llrrrr", resize=True)
+                 "PostgreSQL 16 y un núcleo). El sobrecosto se calcula respecto de la misma "
+                 "tabla sin índices.", "tab:escritura_indices",
+                 ancho="llrrrrrr", resize=True)
 
 
 def main():
