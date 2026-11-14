@@ -2500,6 +2500,8 @@ Lectura\_Suelo & \texttt{pk\_lectura} & B+ tree & 23\,608 & Clave primaria \\
 
 \subsection{Resultados}
 
+Para cada consulta se presenta el gráfico de tiempos, la tabla de promedios, los planes de ejecución en texto y las capturas de la misma consulta ejecutada con \tb{EXPLAIN ANALYZE} en pgAdmin sobre la base de un millón de registros. Las capturas corresponden a una ejecución individual, por eso sus tiempos difieren un poco de los promedios.
+
 \subsubsection{Consulta 1}
 
 \begin{figure}[H]
@@ -2645,6 +2647,33 @@ Execution Time: 49.742 ms
 \end{lstlisting}
 
 
+\textbf{Ejecución en pgAdmin (1M)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c1_sin_plan.png}
+\caption{Consulta 1 sin índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c1_sin_arbol.png}
+\caption{Consulta 1 sin índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c1_con_plan.png}
+\caption{Consulta 1 con índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c1_con_arbol.png}
+\caption{Consulta 1 con índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
+
 \subsubsection{Consulta 2}
 
 \begin{figure}[H]
@@ -2788,6 +2817,21 @@ InitPlan 2 (returns $4)
 Planning Time: 0.879 ms
 Execution Time: 105.374 ms
 \end{lstlisting}
+
+
+\textbf{Ejecución en pgAdmin (1M)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c2_sin_plan.png}
+\caption{Consulta 2 sin índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c2_con_plan.png}
+\caption{Consulta 2 con índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
 
 
 \subsubsection{Consulta 3}
@@ -2941,6 +2985,21 @@ Execution Time: 323.000 ms
 \end{lstlisting}
 
 
+\textbf{Ejecución en pgAdmin (1M)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c3_sin_plan.png}
+\caption{Consulta 3 sin índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c3_con_plan.png}
+\caption{Consulta 3 con índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+
 \subsubsection{Consulta 4}
 
 \begin{figure}[H]
@@ -3050,6 +3109,21 @@ Execution Time: 26.721 ms
 \end{lstlisting}
 
 
+\textbf{Ejecución en pgAdmin (1M)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c4_sin_plan.png}
+\caption{Consulta 4 sin índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c4_con_plan.png}
+\caption{Consulta 4 con índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+
 \subsubsection{Consulta 5}
 
 \begin{figure}[H]
@@ -3157,6 +3231,33 @@ Sort Method: quicksort  Memory: 25kB
 Planning Time: 0.533 ms
 Execution Time: 28.082 ms
 \end{lstlisting}
+
+
+\textbf{Ejecución en pgAdmin (1M)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c5_sin_plan.png}
+\caption{Consulta 5 sin índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c5_sin_arbol.png}
+\caption{Consulta 5 sin índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c5_con_plan.png}
+\caption{Consulta 5 con índices: plan de ejecución en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/pgadmin/c5_con_arbol.png}
+\caption{Consulta 5 con índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
 
 
 \subsection{Análisis y Discusión}
@@ -3292,7 +3393,13 @@ C5 & sin & 33.9 & 120.7 & 44.9 & 1.65 \\
 \end{table}
 
 
-Casi todas las consultas crecen de forma lineal ($b \approx 1$), lo que corresponde a recorridos completos de tabla con uniones hash: el costo es proporcional al número de filas. La excepción es la consulta 5 sin índice, con exponentes entre 1.6 y 2.1. La razón es que el número de alertas y el de riegos crecen a la vez, y por cada alerta se recorre la tabla de riegos: el costo es $O(A \cdot E)$, que en la práctica es cuadrático. Con el índice, cada búsqueda cuesta $O(\log E)$ y el total queda en $O(A \log E)$, casi lineal, como confirma el exponente de 1.0.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/escalamiento.png}
+\caption{Tiempo promedio por escenario, con escala logarítmica en ambos ejes.}\label{fig:escalamiento}
+\end{figure}
+
+Casi todas las consultas crecen de forma lineal ($b \approx 1$, Figura~\ref{fig:escalamiento}), lo que corresponde a recorridos completos de tabla con uniones hash: el costo es proporcional al número de filas. La excepción es la consulta 5 sin índice, con exponentes entre 1.6 y 2.1. La razón es que el número de alertas y el de riegos crecen a la vez, y por cada alerta se recorre la tabla de riegos: el costo es $O(A \cdot E)$, que en la práctica es cuadrático. Con el índice, cada búsqueda cuesta $O(\log E)$ y el total queda en $O(A \log E)$, casi lineal, como confirma el exponente de 1.0.
 
 \textbf{Proyección.} Si extrapolamos esos exponentes, con diez millones de registros la consulta 5 sin índice pasaría de 30 segundos a entre 20 y 60 minutos, mientras que con índice rondaría los 300~ms. La consulta 1 sin índice subiría a alrededor de un segundo y medio. Son estimaciones gruesas, porque al crecer la base dejaría de caber en memoria y aparecerían lecturas de disco que hoy no existen, pero el orden de magnitud basta para ver que los recorridos completos dejan de ser una opción.
 
