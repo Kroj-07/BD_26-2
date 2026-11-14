@@ -14,6 +14,6 @@ escritura con Insercion de 20 000 lecturas                  238.342 ms
 escritura con Actualizacion de humedad (sensores 1 a 60)    148.257 ms
 escritura con Insercion de 5 000 eventos de riego            74.312 ms
 tramo terminado: escritura
-resultados unidos en /home/claude/proy/resultados
+resultados unidos en ./resultados
 tramo terminado: unir
-figuras generadas en /home/claude/proy/informe/figuras
+figuras generadas en ./informe/figuras
