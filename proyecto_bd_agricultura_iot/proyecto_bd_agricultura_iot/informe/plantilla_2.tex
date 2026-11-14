@@ -641,7 +641,7 @@ El modelo cliente-servidor dejaría de ser suficiente en otro escenario: una pla
 
 \subsection{Video de demostración}
 
-Video con la base de un millón de registros, ejecutando las consultas con y sin índices: \enlaceVideo
+Video con la base de un millón de registros, ejecutando las consultas con y sin índices: archivo \tb{Video\_1M\_con\_y\_sin\_indices.mp4} de la carpeta \enlaceVideo{} (requiere iniciar sesión con una cuenta de UTEC).
 
 En el video se sigue el mismo procedimiento de la Sección~\ref{sec:metodologia}, sobre la base de un millón de registros:
 
@@ -665,15 +665,13 @@ El video se grabó en Windows con PostgreSQL 18, mientras que las mediciones del
 
 \subsection{Respaldos de la base de datos}
 
-Los cuatro respaldos se generaron con \tb{pg\_dump} en formato personalizado y compresión nivel 6: \enlaceDumps
+Los cuatro respaldos se generaron con \tb{pg\_dump} en formato personalizado y compresión nivel 6. Están en la subcarpeta \tb{Dumps} de la carpeta \enlaceDumps{} (requiere iniciar sesión con una cuenta de UTEC).
 
 %%TABLA_DUMPS%%
 
 Para restaurar uno de ellos: \tb{createdb agro1m} y luego \tb{pg\_restore -d agro1m agro\_1M.dump}.
 
 \subsection{Scripts del proyecto}
-
-Carpeta con todos los scripts: \enlaceRepositorio
 
 \begin{table}[H]
 \centering\small
