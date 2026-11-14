@@ -368,6 +368,7 @@ Los índices tienen un precio. Insertar 20\,000 lecturas cuesta 42~\% más con l
 %%TABLA_INDICES_TAM%%
 
 \subsection{Resultados}
+\label{sec:resultados}
 
 Para cada consulta se presenta el gráfico de tiempos, la tabla de promedios, los planes de ejecución en texto y las capturas de la misma consulta ejecutada con \tb{EXPLAIN ANALYZE} en pgAdmin sobre la base de un millón de registros. Las capturas corresponden a una ejecución individual, por eso sus tiempos difieren un poco de los promedios.
 
@@ -653,6 +654,8 @@ VACUUM ANALYZE;
 -- 5. Las mismas cinco consultas
 EXPLAIN (ANALYZE, BUFFERS) <consulta 1>;  -- y asi hasta la consulta 5
 \end{lstlisting}
+
+El video se grabó en Windows con PostgreSQL 18, mientras que las mediciones del informe se hicieron en Ubuntu con PostgreSQL 16 (Tabla~\ref{tab:plataforma}); además muestra una sola ejecución, cuyo tiempo depende del equipo, del estado de la caché y de la carga del sistema, por lo que puede diferir de los promedios de la Sección~\ref{sec:resultados}. El caso más visible es la consulta 2: en el video mejora con índices, mientras que en nuestras mediciones con un millón de registros es un 26~\% más lenta (Tablas~\ref{tab:sin2} y~\ref{tab:con2}). Según los planes de la Sección~\ref{sec:resultados}, con índices el planificador cambia el \emph{Hash Join} por un \emph{Nested Loop} que desciende 1\,500 veces por \tb{idx\_evento\_parcela\_fecha} con un \emph{Memoize} sin aciertos, una elección basada en estimaciones de costo cuyo margen es tan estrecho que el resultado ya se invierte entre 100\,000 y un millón de registros. Con ese margen, un cambio de equipo o de versión del gestor puede bastar para que la consulta 2 pase de empeorar a mejorar.
 
 \subsection{Respaldos de la base de datos}
 
