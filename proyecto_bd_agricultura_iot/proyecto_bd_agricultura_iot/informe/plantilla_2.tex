@@ -376,7 +376,7 @@ Cada índice añade hasta 23~\% a las inserciones y hasta 60~\% a las actualizac
 \subsection{Resultados}
 \label{sec:resultados}
 
-Para cada consulta se presenta el gráfico de tiempos, la tabla de promedios, los planes de ejecución en texto y las capturas de la misma consulta ejecutada con \tb{EXPLAIN ANALYZE} en pgAdmin sobre la base de un millón de registros. Las capturas corresponden a una ejecución individual, por eso sus tiempos difieren un poco de los promedios.
+Para cada consulta se presenta el gráfico de tiempos, la tabla de promedios y las capturas del plan de ejecución completo, obtenido con \tb{EXPLAIN (ANALYZE, BUFFERS)} en pgAdmin sobre la base de un millón de registros; cada plan se muestra en dos partes. Las capturas se tomaron con PostgreSQL 18 en Windows, mientras que los tiempos de las tablas son de PostgreSQL 16. Además, corresponden a una ejecución individual, por eso sus tiempos difieren un poco de los promedios.
 
 \subsubsection{Consulta 1}
 
@@ -390,17 +390,15 @@ Para cada consulta se presenta el gráfico de tiempos, la tabla de promedios, lo
 
 El índice mejora la consulta a partir de 10\,000 registros y con un millón la acelera 2.4 veces. Sin índice, PostgreSQL recorre las 765\,861 lecturas con un \emph{Parallel Seq Scan} y descarta nueve de cada diez. Con el índice, el \emph{Index Only Scan} sobre \tb{idx\_lectura\_fecha} lee solo las 77\,020 lecturas del último mes. Los índices sobre campañas y dispositivos no se usan: esas tablas tienen pocos miles de filas y el planificador las recorre completas porque le resulta más barato.
 
-\textbf{Plan de ejecución sin índices (1M)}
-%%PLAN:1:sin%%
-\textbf{Plan de ejecución con índices (1M)}
-%%PLAN:1:con%%
-
 \textbf{Ejecución en pgAdmin (1M)}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c1_sin_plan.png}
-\caption{Consulta 1 sin índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 1 sin índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c1_sin_plan_2.png}
+\caption{Consulta 1 sin índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 \begin{figure}[H]
@@ -412,7 +410,10 @@ El índice mejora la consulta a partir de 10\,000 registros y con un millón la 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c1_con_plan.png}
-\caption{Consulta 1 con índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 1 con índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c1_con_plan_2.png}
+\caption{Consulta 1 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 \begin{figure}[H]
@@ -434,23 +435,24 @@ El índice mejora la consulta a partir de 10\,000 registros y con un millón la 
 
 Es el caso en que el índice perjudica. Hasta 100\,000 registros la versión con índices es ligeramente más rápida, pero con un millón es 26~\% más lenta. Sin índices, el plan lee una sola vez los 120\,000 riegos y los une con las campañas mediante un \emph{Hash Join}. Con índices, el planificador cambia a un \emph{Nested Loop}: por cada una de las 1\,500 campañas desciende por \tb{idx\_evento\_parcela\_fecha} y agrega un nodo \emph{Memoize} para reutilizar búsquedas repetidas. Ese caché no acierta ni una vez (0 aciertos, 1\,500 fallos) porque cada campaña tiene un rango de fechas distinto. Mil quinientos descensos por el índice más el costo del caché inútil superan a un único recorrido secuencial. El planificador estimó mal y solo la medición lo revela.
 
-\textbf{Plan de ejecución sin índices (1M)}
-%%PLAN:2:sin%%
-\textbf{Plan de ejecución con índices (1M)}
-%%PLAN:2:con%%
-
 \textbf{Ejecución en pgAdmin (1M)}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c2_sin_plan.png}
-\caption{Consulta 2 sin índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 2 sin índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c2_sin_plan_2.png}
+\caption{Consulta 2 sin índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c2_con_plan.png}
-\caption{Consulta 2 con índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 2 con índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c2_con_plan_2.png}
+\caption{Consulta 2 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 
@@ -466,23 +468,24 @@ Es el caso en que el índice perjudica. Hasta 100\,000 registros la versión con
 
 Los tiempos son prácticamente iguales en las dos condiciones y el plan es el mismo: un recorrido secuencial paralelo de toda la tabla de lecturas. La consulta necesita el 84~\% de las filas, y para ese volumen leer la tabla en orden físico es más barato que recorrer un índice. El índice \tb{idx\_lectura\_disp\_humedad} ocupa 24~MB y nunca se usa.
 
-\textbf{Plan de ejecución sin índices (1M)}
-%%PLAN:3:sin%%
-\textbf{Plan de ejecución con índices (1M)}
-%%PLAN:3:con%%
-
 \textbf{Ejecución en pgAdmin (1M)}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c3_sin_plan.png}
-\caption{Consulta 3 sin índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 3 sin índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c3_sin_plan_2.png}
+\caption{Consulta 3 sin índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c3_con_plan.png}
-\caption{Consulta 3 con índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 3 con índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c3_con_plan_2.png}
+\caption{Consulta 3 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 
@@ -498,23 +501,24 @@ Los tiempos son prácticamente iguales en las dos condiciones y el plan es el mi
 
 Tampoco hay diferencia. El filtro por categoría conserva el 82~\% de las cosechas (primera y segunda), así que el planificador vuelve a preferir el recorrido secuencial, y la tabla de cosechas es pequeña (25\,000 filas). La mayor parte del tiempo se va en las funciones de ventana y en el ordenamiento, que ningún índice acelera en este caso.
 
-\textbf{Plan de ejecución sin índices (1M)}
-%%PLAN:4:sin%%
-\textbf{Plan de ejecución con índices (1M)}
-%%PLAN:4:con%%
-
 \textbf{Ejecución en pgAdmin (1M)}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c4_sin_plan.png}
-\caption{Consulta 4 sin índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 4 sin índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c4_sin_plan_2.png}
+\caption{Consulta 4 sin índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c4_con_plan.png}
-\caption{Consulta 4 con índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 4 con índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c4_con_plan_2.png}
+\caption{Consulta 4 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 
@@ -530,17 +534,15 @@ Tampoco hay diferencia. El filtro por categoría conserva el 82~\% de las cosech
 
 Es la mejora más grande del experimento: con un millón de registros la consulta pasa de 29 segundos a 30 milisegundos, casi mil veces más rápida. Sin índice, la subconsulta correlacionada ejecuta un recorrido secuencial de \tb{Evento\_Riego} por cada una de las 7\,714 alertas y descarta en promedio unas 60\,000 filas en cada uno. Con índice, cada búsqueda es un \emph{Index Only Scan} sobre \tb{uq\_evento} que tarda alrededor de un microsegundo. La brecha crece con el volumen: 12 veces en 10\,000 registros, 220 veces en 100\,000 y casi mil en un millón.
 
-\textbf{Plan de ejecución sin índices (1M)}
-%%PLAN:5:sin%%
-\textbf{Plan de ejecución con índices (1M)}
-%%PLAN:5:con%%
-
 \textbf{Ejecución en pgAdmin (1M)}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c5_sin_plan.png}
-\caption{Consulta 5 sin índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 5 sin índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c5_sin_plan_2.png}
+\caption{Consulta 5 sin índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 \begin{figure}[H]
@@ -552,7 +554,10 @@ Es la mejora más grande del experimento: con un millón de registros la consult
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figuras/pgadmin/c5_con_plan.png}
-\caption{Consulta 5 con índices: plan de ejecución en pgAdmin (1M).}
+\caption{Consulta 5 con índices: plan de ejecución en pgAdmin (1M), parte 1 de 2.}
+\vspace{1em}
+\includegraphics[width=\textwidth]{figuras/pgadmin/c5_con_plan_2.png}
+\caption{Consulta 5 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
 \begin{figure}[H]
@@ -661,7 +666,7 @@ VACUUM ANALYZE;
 EXPLAIN (ANALYZE, BUFFERS) <consulta 1>;  -- y asi hasta la consulta 5
 \end{lstlisting}
 
-El video se grabó en Windows con PostgreSQL 18, mientras que las mediciones del informe se hicieron en Ubuntu con PostgreSQL 16 (Tabla~\ref{tab:plataforma}); además muestra una sola ejecución, cuyo tiempo depende del equipo, del estado de la caché y de la carga del sistema, por lo que puede diferir de los promedios de la Sección~\ref{sec:resultados}. El caso más visible es la consulta 2: en nuestras mediciones con un millón de registros es un 26~\% más lenta con índices (Tablas~\ref{tab:sin2} y~\ref{tab:con2}) y también empeora en las capturas de pgAdmin, tomadas con PostgreSQL 18 (de 58.6 a 92.1~ms), mientras que en una prueba previa a la grabación mejoró. Según los planes de la Sección~\ref{sec:resultados}, con índices el planificador cambia el \emph{Hash Join} por un \emph{Nested Loop} que desciende 1\,500 veces por \tb{idx\_evento\_parcela\_fecha} con un \emph{Memoize} sin aciertos, una elección basada en estimaciones de costo cuyo margen es tan estrecho que el resultado ya se invierte entre 100\,000 y un millón de registros. Por ese margen, en una sola ejecución la consulta 2 puede salir más rápida o más lenta con índices sin contradecir los promedios.
+El video se grabó en Windows con PostgreSQL 18, mientras que las mediciones del informe se hicieron en Ubuntu con PostgreSQL 16 (Tabla~\ref{tab:plataforma}); además muestra una sola ejecución, cuyo tiempo depende del equipo, del estado de la caché y de la carga del sistema, por lo que puede diferir de los promedios de la Sección~\ref{sec:resultados}. El caso más visible es la consulta 2: en nuestras mediciones con un millón de registros es un 26~\% más lenta con índices (Tablas~\ref{tab:sin2} y~\ref{tab:con2}) y también empeora en las capturas de pgAdmin, tomadas con PostgreSQL 18 (de 45.2 a 81.3~ms), mientras que en una prueba previa a la grabación mejoró. Según las capturas de la Sección~\ref{sec:resultados}, con índices el planificador cambia el \emph{Hash Join} por un \emph{Nested Loop} que desciende 1\,500 veces por \tb{idx\_evento\_parcela\_fecha} con un \emph{Memoize} sin aciertos, una elección basada en estimaciones de costo cuyo margen es tan estrecho que el resultado ya se invierte entre 100\,000 y un millón de registros. Por ese margen, en una sola ejecución la consulta 2 puede salir más rápida o más lenta con índices sin contradecir los promedios.
 
 \subsection{Respaldos de la base de datos}
 

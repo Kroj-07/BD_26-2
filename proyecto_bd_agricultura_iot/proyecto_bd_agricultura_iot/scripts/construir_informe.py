@@ -467,12 +467,9 @@ def main():
             filas.append(fila)
     rep["%%TABLA_PLANES%%"] = tabla(
         ["Consulta", "Índices"] + ESC, filas,
-        "Método de acceso a la tabla principal de cada consulta (C1 y C3: lecturas; C2 y C5: "
-        "riegos; C4: cosechas).", "tab:planes",
+        "Método de acceso a la tabla principal de cada consulta (PostgreSQL 16). C1 y C3: "
+        "lecturas; C2 y C5: riegos; C4: cosechas.", "tab:planes",
         ancho="ll" + ">{\\raggedright\\arraybackslash}p{3.1cm}" * 4, resize=True)
-    for q in range(1, 6):
-        for cond in ("sin", "con"):
-            rep["%%%%PLAN:%d:%s%%%%" % (q, cond)] = listado(pl[(q, cond)], "plano")
 
     # ---- tipos de indice
     base = {q: [r for r in d["tipos_indice"] if r["consulta"] == q][-1]["promedio"] for q in (1, 5)}
