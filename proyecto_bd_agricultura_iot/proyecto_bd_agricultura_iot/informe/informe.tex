@@ -347,9 +347,11 @@ La Figura~\ref{fig:er} presenta el diagrama. Usamos notación de Chen: rectángu
 
 \begin{figure}[H]
 \centering
-\IfFileExists{figuras/diagrama_er.png}{%
-  \includegraphics[width=\textwidth]{figuras/diagrama_er.png}}{%
-  \fbox{\parbox[c][7cm][c]{0.9\textwidth}{\centering\textcolor{red}{Insertar aquí el diagrama exportado desde Lucid\\como \tb{informe/figuras/diagrama\_er.png}}}}}
+\IfFileExists{figuras/diagrama_er.pdf}{%
+  \includegraphics[angle=90,width=0.72\textheight]{figuras/diagrama_er.pdf}}{%
+  \IfFileExists{figuras/diagrama_er.png}{%
+    \includegraphics[angle=90,width=0.72\textheight]{figuras/diagrama_er.png}}{%
+    \fbox{\parbox[c][7cm][c]{0.9\textwidth}{\centering\textcolor{red}{Copiar el diagrama a \tb{informe/figuras/diagrama\_er.pdf}}}}}}
 \caption{Modelo entidad-relación.}
 \label{fig:er}
 \end{figure}
