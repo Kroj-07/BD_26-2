@@ -364,7 +364,7 @@ La Figura~\ref{fig:er} presenta el diagrama. Usamos notación de Chen: rectángu
 
 \textbf{Relación ternaria.} \tb{Aplica} relaciona \tb{Zona\_Manejo}, \tb{Insumo} y \tb{Operario}. No se puede reemplazar por tres relaciones binarias sin perder información: saber qué operario aplicó qué insumo y en qué zona trabajó cada operario no permite reconstruir quién aplicó qué cosa dónde. La terna es de muchos a muchos a muchos, por eso ninguno de sus arcos lleva flecha.
 
-\textbf{Atributos compuestos y derivados.} La ubicación del fundo (departamento, provincia, distrito) y los rangos óptimos del cultivo (mínimo y máximo de humedad y de pH) son atributos compuestos que se aplanan en columnas simples. El rendimiento por hectárea de la campaña es derivado; se almacena por rendimiento de consulta y lo mantiene un trigger.
+\textbf{Atributos compuestos y derivado.} El diagrama dibuja seis atributos compuestos, cada uno con su óvalo padre y sus óvalos hijos: \emph{ubicación} del fundo (\tb{departamento}, \tb{provincia}, \tb{distrito}), \emph{coordenadas} del fundo (\tb{latitud}, \tb{longitud}), \emph{rango de humedad óptima} y \emph{rango de pH óptimo} del cultivo (mínimo y máximo de cada uno), \emph{nombre completo} del operario (\tb{nombre}, \tb{apellido}) y \emph{rango de medición} del sensor (\tb{rango\_min}, \tb{rango\_max}). Se usaron porque el dato se consulta a veces como un todo (``dónde queda el fundo'') y a veces por componentes (``fundos de Piura'', ``humedad mínima del cultivo''). En el paso al modelo relacional el atributo padre no genera columna: cada hijo pasa a ser una columna simple (Sección~\ref{sec:trans-entidades}). No hay atributos multivaluados. El único atributo derivado es el rendimiento por hectárea de la campaña (\tb{rendimiento\_kg\_ha}, óvalo punteado): se almacena por rendimiento de consulta y lo mantiene un trigger.
 
 \textbf{Tabla fuera del modelo conceptual.} \tb{Auditoria\_Campania} es una bitácora técnica alimentada por un trigger. No representa un objeto del negocio, por lo que no aparece en el diagrama.
 
@@ -400,9 +400,9 @@ El esquema tiene 18 relaciones: 15 provienen de las entidades del modelo concept
 
 \subsection{Especificaciones de transformación}
 
-\subsubsection{Entidades}
+\subsubsection{Entidades}\label{sec:trans-entidades}
 
-Cada entidad fuerte se convirtió en una tabla con sus atributos simples: \tb{Fundo}, \tb{Parcela}, \tb{Cultivo}, \tb{Operario}, \tb{Campania}, \tb{Sistema\_Riego}, \tb{Dispositivo}, \tb{Evento\_Riego}, \tb{Alerta}, \tb{Cosecha} e \tb{Insumo}. Los atributos compuestos se aplanaron: la ubicación del fundo quedó en tres columnas y cada rango óptimo del cultivo en un par mínimo--máximo con un \tb{CHECK} que exige mínimo menor que máximo.
+Cada entidad fuerte se convirtió en una tabla con sus atributos simples: \tb{Fundo}, \tb{Parcela}, \tb{Cultivo}, \tb{Operario}, \tb{Campania}, \tb{Sistema\_Riego}, \tb{Dispositivo}, \tb{Evento\_Riego}, \tb{Alerta}, \tb{Cosecha} e \tb{Insumo}. Los seis atributos compuestos del diagrama se aplanaron, es decir, se descartó el atributo padre y cada componente quedó como columna: la ubicación en tres columnas, las coordenadas en \tb{latitud} y \tb{longitud}, el nombre del operario en \tb{nombre} y \tb{apellido}, y cada rango en un par mínimo--máximo (humedad y pH óptimos del cultivo, rango del sensor). Cada par lleva un \tb{CHECK} que exige mínimo menor que máximo (\tb{ck\_cultivo\_hum}, \tb{ck\_cultivo\_ph}, \tb{ck\_sensor\_rango}). El nombre completo no se almacena porque se obtiene concatenando las dos columnas.
 
 Como claves usamos identificadores numéricos generados por secuencia (\tb{SERIAL}) y no las claves naturales, porque los códigos de la empresa cambian o se repiten: un código de parcela se reutiliza entre fundos y un equipo reinstalado conserva su número de serie. Las claves naturales no se descartaron; quedaron como restricciones \tb{UNIQUE} (\tb{codigo\_serie}, \tb{dni}, \tb{nombre\_comun} y el par \tb{id\_fundo}, \tb{codigo\_parcela}), de modo que la base sigue impidiendo duplicados reales.
 
@@ -484,6 +484,36 @@ Todas las tablas cumplen la primera forma normal (valores atómicos, sin grupos 
 \item \textbf{Ubicación del fundo.} En el Perú el nombre de un distrito no identifica su provincia (en nuestros datos hay un distrito Bellavista en Sullana y otro en Jaén), así que no existe la dependencia distrito $\to$ provincia. Sí podría argumentarse provincia $\to$ departamento. Con doce fundos la redundancia es despreciable; si la tabla creciera, la solución sería reemplazar las tres columnas por el código UBIGEO del INEI con su propia tabla.
 \item \textbf{Rendimiento de la campaña.} \tb{rendimiento\_kg\_ha} se deriva de las cosechas y del área, por lo que es una redundancia controlada. La mantenemos porque se consulta mucho más de lo que cambia y la actualiza un trigger en cada inserción, modificación o borrado de cosechas.
 \end{itemize}
+
+Resumen por tabla (clave y dependencias funcionales no triviales). En todas las tablas el lado izquierdo de cada dependencia es la clave o una superclave, salvo los casos analizados arriba.
+
+\begin{table}[H]
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{1.2cm}}
+\toprule
+\textbf{Tabla} & \textbf{Clave} & \textbf{Dependencias funcionales} & \textbf{Forma} \\
+\midrule
+Fundo & id\_fundo & id\_fundo $\to$ todos los atributos & 3FN \\
+Parcela & id\_parcela; (id\_fundo, codigo\_parcela) & id\_parcela $\to$ resto; (id\_fundo, codigo\_parcela) $\to$ id\_parcela & FNBC \\
+Zona\_Manejo & (id\_parcela, num\_zona) & clave $\to$ area\_ha, descripcion & FNBC \\
+Cultivo & id\_cultivo; nombre\_comun & id\_cultivo $\to$ resto & FNBC \\
+Operario & id\_operario; dni & id\_operario $\to$ resto; dni $\to$ id\_operario & FNBC \\
+Campania & id\_campania; (id\_parcela, fecha\_siembra) & id\_campania $\to$ resto & FNBC \\
+Sistema\_Riego & id\_sistema & id\_sistema $\to$ resto & FNBC \\
+Dispositivo & id\_dispositivo; codigo\_serie & id\_dispositivo $\to$ resto & FNBC \\
+Sensor, Controlador & id\_dispositivo & id\_dispositivo $\to$ atributos propios & FNBC \\
+Lectura\_Suelo & (id\_dispositivo, fecha\_hora) & clave $\to$ las cinco variables medidas & FNBC \\
+Evento\_Riego & id\_evento; (id\_parcela, num\_zona, fecha\_hora\_inicio) & clave $\to$ resto; id\_sistema $\to$ id\_parcela & 3FN \\
+Alerta & id\_alerta; (id\_dispositivo, fecha\_hora, tipo) & id\_alerta $\to$ resto & FNBC \\
+Cosecha & id\_cosecha & id\_cosecha $\to$ resto & FNBC \\
+Insumo & id\_insumo & id\_insumo $\to$ resto & FNBC \\
+Aplicacion\_Insumo & PK de cinco columnas & clave $\to$ dosis, metodo & FNBC \\
+Mantenimiento & (id\_dispositivo, id\_operario, fecha) & clave $\to$ tipo, observacion, costo & FNBC \\
+Auditoria\_Campania & id\_auditoria & id\_auditoria $\to$ resto & FNBC \\
+\bottomrule
+\end{tabularx}
+\caption{Normalización tabla por tabla.}
+\end{table}
 
 \subsection{Diccionario de datos}
 
@@ -2648,6 +2678,18 @@ Es el caso en que el índice perjudica. Hasta 100\,000 registros la versión con
 \caption{Consulta 2 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/pgadmin/c2_sin_arbol.png}{\includegraphics[width=\textwidth]{figuras/pgadmin/c2_sin_arbol.png}}{\fbox{\parbox[c][4cm][c]{0.9\textwidth}{\centering\textcolor{red}{Insertar captura del plan gráfico: figuras/pgadmin/c2\_sin\_arbol.png}}}}
+\caption{Consulta 2 sin índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/pgadmin/c2_con_arbol.png}{\includegraphics[width=\textwidth]{figuras/pgadmin/c2_con_arbol.png}}{\fbox{\parbox[c][4cm][c]{0.9\textwidth}{\centering\textcolor{red}{Insertar captura del plan gráfico: figuras/pgadmin/c2\_con\_arbol.png}}}}
+\caption{Consulta 2 con índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
 
 \subsubsection{Consulta 3}
 
@@ -2695,6 +2737,18 @@ Los tiempos son prácticamente iguales en las dos condiciones y el plan es el mi
 \caption{Consulta 3 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/pgadmin/c3_sin_arbol.png}{\includegraphics[width=\textwidth]{figuras/pgadmin/c3_sin_arbol.png}}{\fbox{\parbox[c][4cm][c]{0.9\textwidth}{\centering\textcolor{red}{Insertar captura del plan gráfico: figuras/pgadmin/c3\_sin\_arbol.png}}}}
+\caption{Consulta 3 sin índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/pgadmin/c3_con_arbol.png}{\includegraphics[width=\textwidth]{figuras/pgadmin/c3_con_arbol.png}}{\fbox{\parbox[c][4cm][c]{0.9\textwidth}{\centering\textcolor{red}{Insertar captura del plan gráfico: figuras/pgadmin/c3\_con\_arbol.png}}}}
+\caption{Consulta 3 con índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
 
 \subsubsection{Consulta 4}
 
@@ -2740,6 +2794,18 @@ Tampoco hay diferencia. El filtro por categoría conserva el 82~\% de las cosech
 \vspace{1em}
 \includegraphics[width=0.9\textwidth]{figuras/pgadmin/c4_con_plan_2.png}
 \caption{Consulta 4 con índices: plan de ejecución en pgAdmin (1M), parte 2 de 2.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/pgadmin/c4_sin_arbol.png}{\includegraphics[width=\textwidth]{figuras/pgadmin/c4_sin_arbol.png}}{\fbox{\parbox[c][4cm][c]{0.9\textwidth}{\centering\textcolor{red}{Insertar captura del plan gráfico: figuras/pgadmin/c4\_sin\_arbol.png}}}}
+\caption{Consulta 4 sin índices: plan gráfico en pgAdmin (1M).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/pgadmin/c4_con_arbol.png}{\includegraphics[width=\textwidth]{figuras/pgadmin/c4_con_arbol.png}}{\fbox{\parbox[c][4cm][c]{0.9\textwidth}{\centering\textcolor{red}{Insertar captura del plan gráfico: figuras/pgadmin/c4\_con\_arbol.png}}}}
+\caption{Consulta 4 con índices: plan gráfico en pgAdmin (1M).}
 \end{figure}
 
 
